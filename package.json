@@ -4,12 +4,15 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "babel-node ./main.js"
+    "start": "babel-node ./src/index.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.0",
     "@babel/core": "^7.16.0",
     "@babel/node": "^7.16.0",
     "@babel/preset-env": "^7.16.0"
+  },
+  "dependencies": {
+    "graphql-yoga": "^1.18.3"
   }
 }
