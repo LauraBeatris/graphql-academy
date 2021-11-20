@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "babel-node ./src/index.js"
+    "start": "nodemon ./src/index.js --exec babel-node"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.0",
@@ -13,6 +13,7 @@
     "@babel/preset-env": "^7.16.0"
   },
   "dependencies": {
-    "graphql-yoga": "^1.18.3"
+    "graphql-yoga": "^1.18.3",
+    "nodemon": "2.0.4"
   }
 }

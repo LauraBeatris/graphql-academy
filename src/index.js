@@ -1,16 +1,33 @@
 import { GraphQLServer } from 'graphql-yoga';
 
 const typeDefs = `
+  input RestaurantFilters {
+    name: String!
+  }
+
   type Query {
-    location: String!
-    bio: String!
+    id: ID!
+    title: String!
+    price: Int!
+    rating: Float
+    isInStock: Boolean!
+    releaseYear: Int 
+    listOfAuthors: [String!]!
+
+    restaurants(filters: RestaurantFilters!): [String!]
   }
 `
 
 const resolvers = {
   Query: {
-    location: () => 'Diemen, Netherlands',
-    bio: () => 'Software Developer'
+    id: () => 123,
+    title: () => 'Playstation 5',
+    price: () => '1.0',
+    rating: () => '123.3',
+    isInStock: () => false,
+    releaseYear: () => undefined,
+    listOfAuthors: () => ['Laura'],
+    restaurants: () => ['Effendy Bakery']
   }
 }
 
