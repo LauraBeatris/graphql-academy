@@ -6,27 +6,35 @@ const typeDefs = `
   }
 
   type Query {
-    id: ID!
-    title: String!
-    price: Int!
-    rating: Float
-    isInStock: Boolean!
-    releaseYear: Int 
-    listOfAuthors: [String!]!
-
+    add(num1: Float!, num2: Float!): Float!
+    post: Post!
     restaurants(filters: RestaurantFilters!): [String!]
+    User: User!
+  }
+
+  type Post {
+    id: ID!
+    body: String!
+    title: String!
+    test: Int,
+    isPublished: Boolean!
   }
 `
 
 const resolvers = {
   Query: {
-    id: () => 123,
-    title: () => 'Playstation 5',
-    price: () => '1.0',
-    rating: () => '123.3',
-    isInStock: () => false,
-    releaseYear: () => undefined,
-    listOfAuthors: () => ['Laura'],
+    add: (parent, { num1, num2 }, context, info) => {
+      console.log({ parent, context, info })
+
+      return num1 + num2
+    },
+    post: () => ({ 
+      id: 123, 
+      body: 'This is my post body', 
+      title: 'My dumb post', 
+      test: '123',
+      isPublished: false
+    }),
     restaurants: () => ['Effendy Bakery']
   }
 }
