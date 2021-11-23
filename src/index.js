@@ -1,48 +1,84 @@
-import { GraphQLServer } from 'graphql-yoga';
+import { GraphQLServer } from 'graphql-yoga'
+
+/**
+ * @todo - Remove after fetching from external source. Eg: Database.
+ */
+const mockPosts = [
+  {
+    id: 1,
+    body: "Let's talk about Elixir LiveView",
+    title: 'Elixir LiveView',
+    isPublished: true,
+  },
+  {
+    id: 2,
+    body: 'How to provide query arguments to a GraphQL Operation',
+    title: 'GraphQL Query Arguments',
+    isPublished: false,
+  },
+  {
+    id: 3,
+    body: 'How to create a custom type in GraphQL',
+    title: 'Custom types in GraphQL',
+    isPublished: true,
+  }
+]
 
 const typeDefs = `
-  input RestaurantFilters {
-    name: String!
+  type Query {
+    me: User!
+    posts(query: String): [Post!]!
   }
 
-  type Query {
-    add(num1: Float!, num2: Float!): Float!
-    post: Post!
-    restaurants(filters: RestaurantFilters!): [String!]
-    User: User!
+  type User {
+    id: ID!
+    name: String!
+    email: String!
   }
 
   type Post {
     id: ID!
     body: String!
     title: String!
-    test: Int,
     isPublished: Boolean!
   }
 `
 
+/**
+ * Returns boolean determining whether a post should 
+ * be filtered by a given query string argument
+ * 
+ * @param {String} query
+ * @param {String[]} fields  
+ */
+const byQuery = ({ query, fields }) => {
+  const lowerCaseQuery = query.toLowerCase()
+
+  return fields.some(
+    (field => field.toLowerCase().includes(lowerCaseQuery))
+  )
+} 
+
 const resolvers = {
   Query: {
-    add: (parent, { num1, num2 }, context, info) => {
-      console.log({ parent, context, info })
+    posts: (_parent, args, _ctx, _info) =>  {
+      const { query } = args
 
-      return num1 + num2
-    },
-    post: () => ({ 
-      id: 123, 
-      body: 'This is my post body', 
-      title: 'My dumb post', 
-      test: '123',
-      isPublished: false
-    }),
-    restaurants: () => ['Effendy Bakery']
+      if (!query) return mockPosts 
+
+      const filteredPostsByTitleAndBody = mockPosts.filter(({ title, body }) => (
+        byQuery({ query, fields: [title, body] })
+      ))
+
+      return filteredPostsByTitleAndBody
+    }
   }
 }
 
-const server = new GraphQLServer({ typeDefs, resolvers });
+const server = new GraphQLServer({ typeDefs, resolvers })
 
 const options = {
   port: 8000
-};
+}
 
-server.start(options, () => console.log(`GraphQL server running on port ${options.port}`));
+server.start(options, () => console.log(`GraphQL server running on port ${options.port}`))
