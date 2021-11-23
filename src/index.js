@@ -24,14 +24,39 @@ const mockPosts = [
   }
 ]
 
+/**
+ * @todo - Remove after fetching from external source. Eg: Database.
+ */
+ const mockUsers = [
+  {
+    id: 1,
+    name: 'JP',
+    email: 'jp@example.com',
+  },
+  {
+    id: 2,
+    age: 15,
+    name: 'Akos',
+    email: 'akos@example.com',
+  },
+  {
+    id: 3,
+    age: 25,
+    name: 'Juliet',
+    email: 'juliet@example.com',
+  }
+]
+
 const typeDefs = `
   type Query {
     me: User!
+    users(query: String): [User!]!
     posts(query: String): [Post!]!
   }
 
   type User {
     id: ID!
+    age: Int
     name: String!
     email: String!
   }
@@ -61,16 +86,27 @@ const byQuery = ({ query, fields }) => {
 
 const resolvers = {
   Query: {
+    users: (_parent, args, _ctx, _info) => {
+      const { query } = args 
+
+      if (!query) return mockUsers 
+
+      const filteredUsersByQuery = mockUsers.filter(({ name }) => (
+        byQuery({ query, fields: [name] })
+      ))
+
+      return filteredUsersByQuery
+    },
     posts: (_parent, args, _ctx, _info) =>  {
       const { query } = args
 
       if (!query) return mockPosts 
 
-      const filteredPostsByTitleAndBody = mockPosts.filter(({ title, body }) => (
+      const filteredPostsByQuery = mockPosts.filter(({ title, body }) => (
         byQuery({ query, fields: [title, body] })
       ))
 
-      return filteredPostsByTitleAndBody
+      return filteredPostsByQuery 
     }
   }
 }
