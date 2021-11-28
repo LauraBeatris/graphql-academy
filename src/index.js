@@ -107,7 +107,10 @@ const resolvers = {
       ))
 
       return filteredPostsByQuery 
-    }
+    },
+  },
+  User: {
+    name: (parent, args, _ctx, _info) => `${parent.name} - Testing parent argument`
   }
 }
 
