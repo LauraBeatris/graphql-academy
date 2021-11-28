@@ -1,5 +1,7 @@
 import { GraphQLServer } from 'graphql-yoga'
 
+import { GraphQLEmailAddress } from './scalars/EmailAddress'
+
 /**
  * @todo - Remove after fetching from external source. Eg: Database.
  */
@@ -48,6 +50,8 @@ const mockPosts = [
 ]
 
 const typeDefs = `
+  scalar EmailAddress
+
   type Query {
     me: User!
     users(query: String): [User!]!
@@ -58,7 +62,7 @@ const typeDefs = `
     id: ID!
     age: Int
     name: String!
-    email: String!
+    email: EmailAddress!
   }
 
   type Post {
@@ -85,6 +89,7 @@ const byQuery = ({ query, fields }) => {
 } 
 
 const resolvers = {
+  EmailAddress: GraphQLEmailAddress,
   Query: {
     users: (_parent, args, _ctx, _info) => {
       const { query } = args 
