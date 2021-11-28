@@ -32,9 +32,10 @@ const users = (_parent, args) => {
   return filteredUsersByQuery
 }
 
+const me = () => mockUsers[0]
 
 const User = {
   email: (parent) => `${parent.name.toLowerCase()}@example.com`
 }
 
-export { users, User }
+export { me, users, User }

@@ -1,8 +1,9 @@
-import { User, users } from './users'
+import { me, User, users } from './users'
 import { posts } from './posts'
 import { GraphQLEmailAddress } from '../scalars/EmailAddress'
 
 const Query = {
+  me,
   users,
   posts
 }
