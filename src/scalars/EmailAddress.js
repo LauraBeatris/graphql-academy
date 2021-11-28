@@ -5,7 +5,7 @@ import {
 } from 'graphql'
 
 const EMAIL_ADDRESS_REGEX =
-    /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
 /**
  * 
@@ -14,14 +14,14 @@ const EMAIL_ADDRESS_REGEX =
  */
 const validateEmailValue = (value) => {
   if (typeof value !== 'string') {
-    throw new TypeError(`Value is not string: ${value}`);
+    throw new TypeError(`Value is not string: ${value}`)
   }
 
   if (!EMAIL_ADDRESS_REGEX.test(value)) {
     throw new TypeError(`Value is not a valid email address: ${value}`);
   }
 
-  return value;
+  return value
 };
 
 const GraphQLEmailAddressConfig = {
@@ -39,4 +39,6 @@ const GraphQLEmailAddressConfig = {
   }
 }
 
-export const GraphQLEmailAddress = new GraphQLScalarType(GraphQLEmailAddressConfig);
+const GraphQLEmailAddress = new GraphQLScalarType(GraphQLEmailAddressConfig)
+
+export { GraphQLEmailAddress } 
