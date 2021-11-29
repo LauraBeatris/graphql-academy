@@ -38,4 +38,9 @@ const User = {
   email: (parent) => `${parent.name.toLowerCase()}@example.com`
 }
 
-export { me, users, User }
+export { 
+  me, 
+  User, 
+  users, 
+  mockUsers 
+}

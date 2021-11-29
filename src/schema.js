@@ -45,6 +45,9 @@ const Post = new GraphQLObjectType({
     },
     isPublished: {
       type: new GraphQLNonNull(GraphQLBoolean)
+    },
+    author: {
+      type: new GraphQLNonNull(User)
     }
   }
 })
