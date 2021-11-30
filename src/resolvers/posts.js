@@ -1,5 +1,6 @@
 import { byQuery } from "./byQuery"
 import { mockUsers } from "./users"
+import { mockComments } from "./comments"
 
 /**
  * @todo - Remove after fetching from external source. Eg: Database.
@@ -7,8 +8,8 @@ import { mockUsers } from "./users"
  const mockPosts = [
   {
     id: 1,
-    body: "Let's talk about Elixir LiveView",
-    title: 'Elixir LiveView',
+    body: "Of course that Harry Potter is the best movie series ever.",
+    title: 'What are your favorite movie series?',
     userId: 1,
     isPublished: true,
   },
@@ -41,7 +42,8 @@ const posts = (_parent, args) => {
 }
 
 const Post = {
-  author: (parent) => mockUsers.find(({ id }) => id === parent.userId) 
+  author: (parent) => mockUsers.find(({ id }) => id === parent.userId),
+  comments: (parent) => mockComments.filter(({ postId }) => postId === parent.id)
 }
 
 export { 

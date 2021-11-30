@@ -43,7 +43,7 @@ const User = new GraphQLObjectType({
 const Post = new GraphQLObjectType({
   name: 'Post',
   description: "A user's post",
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
@@ -58,8 +58,11 @@ const Post = new GraphQLObjectType({
     },
     author: {
       type: new GraphQLNonNull(User)
+    },
+    comments: {
+      type: new GraphQLList(new GraphQLNonNull(Comment))
     }
-  }
+  })
 })
 
 const Comment = new GraphQLObjectType({
@@ -74,6 +77,9 @@ const Comment = new GraphQLObjectType({
     },
     author: {
       type: new GraphQLNonNull(User)
+    },
+    post: {
+      type: new GraphQLNonNull(Post)
     }
   }
 })
