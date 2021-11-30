@@ -11,10 +11,14 @@ import {
 
 import { GraphQLEmailAddress } from './scalars/EmailAddress';
 
+const getNonNullListType = (type) => (
+  new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(type)))
+)
+
 const User = new GraphQLObjectType({
   name: 'User',
   description: 'A application user',
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID),
     },
@@ -26,8 +30,11 @@ const User = new GraphQLObjectType({
     },
     email: {
       type: new GraphQLNonNull(GraphQLEmailAddress)
+    },
+    posts: {
+      type: new GraphQLList(new GraphQLNonNull(Post))
     }
-  }
+  })
 })
 
 const Post = new GraphQLObjectType({
@@ -51,10 +58,6 @@ const Post = new GraphQLObjectType({
     }
   }
 })
-
-const getNonNullListType = (type) => (
-  new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(type)))
-)
 
 const typeDefs = new GraphQLSchema({
   query: new GraphQLObjectType({

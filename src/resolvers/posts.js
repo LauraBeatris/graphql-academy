@@ -16,14 +16,14 @@ import { mockUsers } from "./users"
     id: 2,
     body: 'How to provide query arguments to a GraphQL Operation',
     title: 'GraphQL Query Arguments',
-    userId: 1,
+    userId: 2,
     isPublished: false,
   },
   {
     id: 3,
     body: 'How to create a custom type in GraphQL',
     title: 'Custom types in GraphQL',
-    userId: 1,
+    userId: 3,
     isPublished: true,
   }
 ]
@@ -44,4 +44,8 @@ const Post = {
   author: (parent) => mockUsers.find(({ id }) => id === parent.userId) 
 }
 
-export { posts, Post }
+export { 
+  Post, 
+  posts, 
+  mockPosts 
+}

@@ -1,4 +1,5 @@
 import { byQuery } from "./byQuery"
+import { mockPosts } from "./posts"
 
 /**
  * @todo - Remove after fetching from external source. Eg: Database.
@@ -35,7 +36,8 @@ const users = (_parent, args) => {
 const me = () => mockUsers[0]
 
 const User = {
-  email: (parent) => `${parent.name.toLowerCase()}@example.com`
+  email: (parent) => `${parent.name.toLowerCase()}@example.com`,
+  posts: (parent) => mockPosts.filter(({ userId }) => userId === parent.id)
 }
 
 export { 
