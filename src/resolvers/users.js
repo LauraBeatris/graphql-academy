@@ -1,4 +1,5 @@
 import { byQuery } from "./byQuery"
+import { mockComments } from "./comments"
 import { mockPosts } from "./posts"
 
 /**
@@ -37,7 +38,8 @@ const me = () => mockUsers[0]
 
 const User = {
   email: (parent) => `${parent.name.toLowerCase()}@example.com`,
-  posts: (parent) => mockPosts.filter(({ userId }) => userId === parent.id)
+  posts: (parent) => mockPosts.filter(({ userId }) => userId === parent.id),
+  comments: (parent) => mockComments.filter(({ userId }) => userId === parent.id)
 }
 
 export { 

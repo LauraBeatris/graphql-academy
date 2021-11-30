@@ -1,11 +1,13 @@
-import { me, User, users } from './users'
 import { posts, Post } from './posts'
+import { me, users, User } from './users'
+import { comments, Comment } from './comments'
 import { GraphQLEmailAddress } from '../scalars/EmailAddress'
 
 const Query = {
   me,
   users,
-  posts
+  posts,
+  comments
 }
 
 const Scalars = {
@@ -16,7 +18,8 @@ const resolvers = {
   ...Scalars,
   Query,
   User,
-  Post
+  Post,
+  Comment
 }
 
 export { resolvers }

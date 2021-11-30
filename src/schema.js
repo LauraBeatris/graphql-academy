@@ -32,7 +32,10 @@ const User = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLEmailAddress)
     },
     posts: {
-      type: new GraphQLList(new GraphQLNonNull(Post))
+      type: getNonNullListType(Post)
+    },
+    comments: {
+      type: getNonNullListType(Comment)
     }
   })
 })
@@ -59,6 +62,22 @@ const Post = new GraphQLObjectType({
   }
 })
 
+const Comment = new GraphQLObjectType({
+  name: 'Comment',
+  description: "A user's comment",
+  fields: {
+    id: {
+      type: new GraphQLNonNull(GraphQLID)
+    },
+    text: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    author: {
+      type: new GraphQLNonNull(User)
+    }
+  }
+})
+
 const typeDefs = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
@@ -77,6 +96,9 @@ const typeDefs = new GraphQLSchema({
         args: {
           query: GraphQLString
         }
+      },
+      comments: {
+        type: getNonNullListType(Comment)
       }
     }
   })
