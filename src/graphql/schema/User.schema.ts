@@ -13,5 +13,5 @@ export class User {
     email: string
 
   @Field(() => [Post], { nullable: 'itemsAndList' })
-    posts: Post[]
+    posts?: Post[]
 }
