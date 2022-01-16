@@ -1,13 +1,13 @@
 import { ID, Field, ObjectType } from 'type-graphql'
 
-@ObjectType({ description: 'Represents a blog user'})
+@ObjectType({ description: 'Represents a blog user' })
 export class User {
-  @Field(type => ID)
-  id: string;
+  @Field(() => ID)
+    id: string
 
   @Field()
-  name: string;
+    name: string
 
   @Field()
-  email: string;
+    email: string
 }
