@@ -21,7 +21,8 @@
           "external", "builtin", "internal", "sibling", "parent", "index"
         ], 
         "pathGroups": [
-          { "pattern": "graphql/**", "group": "internal" }
+          { "pattern": "graphql/**", "group": "internal" },
+          { "pattern": "data/**", "group": "internal" }
         ], 
         "pathGroupsExcludedImportTypes": ["internal"], 
         "alphabetize": { "order": "asc", "caseInsensitive": true }
