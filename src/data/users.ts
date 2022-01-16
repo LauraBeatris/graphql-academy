@@ -1,3 +1,5 @@
 import { dbClient } from './config'
 
-export const getAllUsers = () => dbClient.user.findMany()
+export const getAllUsers = ({ take }: { take: number }) => (
+  dbClient.user.findMany({ take })
+)
