@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "standard"
+  ],
+  "rules": {
+    "sort-imports": [
+      "error", { "ignoreCase": true, "ignoreDeclarationSort": true }
+    ],
+    "import/order": [
+      1, 
+      { 
+        "groups": [
+          "external", "builtin", "internal", "sibling", "parent", "index"
+        ], 
+        "pathGroups": [
+          { "pattern": "graphql/**", "group": "internal" }
+        ], 
+        "pathGroupsExcludedImportTypes": ["internal"], 
+        "alphabetize": { "order": "asc", "caseInsensitive": true }
+      }
+    ]
+  }
+}
