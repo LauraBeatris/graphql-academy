@@ -12,7 +12,11 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "graphql": "^16.0.1",
-    "ts-node": "^10.4.0"
+    "apollo-server": "^3.6.1",
+    "class-validator": "^0.13.2",
+    "graphql": "^16.2.0",
+    "reflect-metadata": "^0.1.13",
+    "ts-node": "^10.4.0",
+    "type-graphql": "^1.1.1"
   }
 }
