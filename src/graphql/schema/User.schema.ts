@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from 'type-graphql'
+import { Post } from './Post.schema'
 
-@ObjectType({ description: 'Represents a blog user' })
+@ObjectType()
 export class User {
   @Field(() => ID)
     id: string
@@ -10,4 +11,7 @@ export class User {
 
   @Field()
     email: string
+
+  @Field(() => [Post], { nullable: 'itemsAndList' })
+    posts?: Post[]
 }
