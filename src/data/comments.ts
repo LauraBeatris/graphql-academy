@@ -7,11 +7,12 @@ export const getAllComments = ({ take }: { take: number }) => (
 export const getPostComments = ({
   postId, take
 }: { postId: string, take: number }) => (
-  dbClient.post.findUnique({
+  dbClient.comment.findMany({
     where: {
-      id: postId
-    }
-  }).comments({ take })
+      postId
+    },
+    take
+  })
 )
 
 export const getCommentAuthor = ({ commentId }: { commentId: string }) => (

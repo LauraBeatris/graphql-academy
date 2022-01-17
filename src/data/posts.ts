@@ -7,11 +7,12 @@ export const getAllPosts = ({ take }: { take: number }) => (
 export const getUserPosts = ({
   userId, take
 }: { userId: string, take: number }) => (
-  dbClient.user.findUnique({
+  dbClient.post.findMany({
     where: {
-      id: userId
-    }
-  }).posts({ take })
+      authorId: userId
+    },
+    take
+  })
 )
 
 export const getPostAuthor = ({ postId }: { postId: string }) => (
