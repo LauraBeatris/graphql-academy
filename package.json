@@ -5,6 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_PATH=./src nodemon --exec ts-node src/index.ts",
+    "migrate-dev": "prisma migrate dev",
+    "seed": "prisma seed",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix"
   },
