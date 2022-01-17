@@ -17,3 +17,4 @@ to link implementations so that you can use as a basis for your personal project
 - [Initial GraphQL API setup with Apollo Server](https://github.com/LauraBeatris/graphql-academy/pull/1)
 - [Schema implementation using TypeGraphQL](https://github.com/LauraBeatris/graphql-academy/tree/main/src/graphql/schema)
 - [Resolvers + data layer with Prisma](https://github.com/LauraBeatris/graphql-academy/pull/3)
+- [Reproducing N+1 issue](https://github.com/LauraBeatris/graphql-academy/pull/4)
