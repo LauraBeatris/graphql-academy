@@ -31,8 +31,7 @@ model User {
 
 model Comment {
   id        String   @id @default(uuid())
-  name      String?  @db.VarChar(255)
-  email     String   @unique @db.VarChar(255)
+  text      String?  @db.VarChar(255)
   postId    String
   authorId  String
   createdAt DateTime @default(now()) @db.Timestamp(6)
