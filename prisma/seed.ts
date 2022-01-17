@@ -73,8 +73,8 @@ async function runDBSeed () {
     where: { email: user3Email },
     update: {},
     create: {
-      name: 'Junior',
-      email: user2Email,
+      name: 'Adriana',
+      email: user3Email,
       posts: {
         create: [
           {
