@@ -96,12 +96,59 @@ async function runDBSeed () {
                 }
               ]
             }
+          },
+          {
+            title: 'GraphQL Academy #6 - Performance',
+            isPublished: true,
+            comments: {
+              create: [
+                {
+                  author: { connect: { email: user1.email } },
+                  text: 'Awesome post!'
+                },
+                {
+                  author: { connect: { email: user1.email } },
+                  text: 'Could you tell me more about edge cases?'
+                }
+              ]
+            }
           }
         ]
       }
     }
   })
   console.log(`DB Seed 🌱 - User ${user3.email} created with posts and comments`)
+
+  const user4Email = 'luis@example.com'
+  const user4 = await prisma.user.upsert({
+    where: { email: user4Email },
+    update: {},
+    create: {
+      name: 'Luis',
+      email: user4Email,
+      posts: {
+        create: [
+          {
+            title: 'GraphQL Academy #7 - N+1 issue',
+            isPublished: false,
+            comments: {
+              create: [
+                {
+                  author: { connect: { email: user4Email } },
+                  text: 'Awesome post created by me!'
+                },
+                {
+                  author: { connect: { email: user3.email } },
+                  text: 'Well... mine is better than yours'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  })
+  console.log(`DB Seed 🌱 - User ${user4.email} created with posts and comments`)
 }
 
 runDBSeed()
