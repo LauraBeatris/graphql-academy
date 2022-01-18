@@ -8,7 +8,7 @@ Simple GraphQL API to be used as a guidance from the topics covered on my worksh
 The goal of this workshop is not to suggest/advocate for specific GraphQL libraries, thus don't feel obliged of choosing
 the same dependencies from this repo as the choices for your project 
 
-However, you can find the reasoning behind by choices [in this pull request](https://github.com/LauraBeatris/graphql-academy/pull/1)
+However, you can find the reasoning behind my choices [in this pull request](https://github.com/LauraBeatris/graphql-academy/pull/1)
 
 ### References by topic
 Not every topic from the workshop will be referenced here, but I'll try as much as possible
