@@ -1,9 +1,9 @@
-import { Min } from 'class-validator'
-import { Arg, Args, ArgsType, createUnionType, Field, FieldResolver, InputType, Int, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
+import { Arg, Args, createUnionType, Field, FieldResolver, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
 import { dbClient } from 'data/config'
 import { getUserPosts } from 'data/posts'
 import { getAllUsers } from 'data/users'
 import { Post } from 'graphql/schema/Post.schema'
+import { PaginationArgs } from 'graphql/schema/sharedArguments'
 import { User } from 'graphql/schema/User.schema'
 
 @ObjectType()
@@ -26,7 +26,7 @@ const CreateUserPayload = createUnionType({
   }
 })
 
-@InputType({ description: 'Represents the input data needed to create a user' })
+@InputType()
 class CreateUserInput implements Partial<User> {
   @Field()
     name: string
@@ -35,32 +35,28 @@ class CreateUserInput implements Partial<User> {
     email: string
 }
 
-@ArgsType()
-class GetUsersArgs {
-  @Field(() => Int, { nullable: true })
-  @Min(1)
-    take?: number
-}
-
-@ArgsType()
-class GetUserPostsArgs {
-  @Field(() => Int, { nullable: true })
-  @Min(1)
-    take?: number
-}
-
 @Resolver(User)
 export class UserResolver {
   @Query(() => [User], { nullable: 'itemsAndList' })
-  users (@Args() { take }: GetUsersArgs) {
+  users (@Args() { take }: PaginationArgs) {
     return getAllUsers({ take })
   }
 
+  @FieldResolver(() => [Post], { nullable: 'itemsAndList' })
+  posts (
+    @Root() { id: userId }: User,
+    @Args() { take }: PaginationArgs
+  ) {
+    return getUserPosts({ userId, take })
+  }
+
   @Mutation(() => CreateUserPayload)
-  async createUser (@Arg('data') createUserInput: CreateUserInput) {
+  async createUser (@Arg('data', {
+    description: 'Represents the input data needed to create a new user'
+  }) createUserInput: CreateUserInput) {
     const { name, email } = createUserInput
 
-    const user = dbClient.user.create({
+    const user = await dbClient.user.create({
       data: {
         name,
         email
@@ -70,13 +66,5 @@ export class UserResolver {
     return {
       user
     }
-  }
-
-  @FieldResolver(() => [Post], { nullable: 'itemsAndList' })
-  posts (
-    @Root() { id: userId }: User,
-    @Args(() => GetUserPostsArgs) { take }: GetUserPostsArgs
-  ) {
-    return getUserPosts({ userId, take })
   }
 }
