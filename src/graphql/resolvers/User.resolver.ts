@@ -1,6 +1,6 @@
-import { Arg, Args, createUnionType, Field, FieldResolver, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
+import { Arg, Args, createUnionType, Field, FieldResolver, ID, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
 import { getUserPosts } from 'data/posts'
-import { createUser, getAllUsers } from 'data/users'
+import { createUser, deleteUser, getAllUsers } from 'data/users'
 import { UserError } from 'graphql/schema/errors'
 import { Post } from 'graphql/schema/Post.schema'
 import { PaginationArgs } from 'graphql/schema/sharedArguments'
@@ -17,19 +17,13 @@ class EmailTakenError {
     emailWasTaken: boolean
 }
 
-const mapMutationValueKeyToObjectType = {
-  user: CreateUserSuccess,
-  code: UserError,
-  emailWasTaken: EmailTakenError
-}
 const CreateUserPayload = createUnionType({
   name: 'CreateUserPayload',
   types: () => [CreateUserSuccess, EmailTakenError, UserError] as const,
   resolveType: mutationValue => {
-    const mapperKeys = Object.keys(mapMutationValueKeyToObjectType)
-    const mutationValueKey = mapperKeys.find((key) => key in mutationValue)
-
-    return mapMutationValueKeyToObjectType[mutationValueKey]
+    if ('emailWasTaken' in mutationValue) return EmailTakenError
+    if ('code' in mutationValue) return UserError
+    if ('user' in mutationValue) return CreateUserSuccess
   }
 })
 
@@ -41,6 +35,26 @@ class CreateUserInput implements Partial<User> {
   @Field()
     email: string
 }
+
+@InputType()
+class DeleteUserInput implements Partial<User> {
+  @Field(() => ID)
+    id: string
+}
+
+@ObjectType()
+class DeleteUserSuccess {
+  @Field(() => User)
+    user: User
+}
+const DeleteUserPayload = createUnionType({
+  name: 'DeleteUserPayload',
+  types: () => [DeleteUserSuccess, UserError] as const,
+  resolveType: mutationValue => {
+    if ('code' in mutationValue) return UserError
+    if ('user' in mutationValue) return DeleteUserSuccess
+  }
+})
 
 @Resolver(User)
 export class UserResolver {
@@ -58,11 +72,14 @@ export class UserResolver {
   }
 
   @Mutation(() => CreateUserPayload)
-  createUser (@Arg('data', {
+  async createUser (@Arg('data', {
     description: 'Represents the input data needed to create a new user'
-  }) createUserInput: CreateUserInput) {
-    const { name, email } = createUserInput
-
+  }) { name, email }: CreateUserInput) {
     return createUser({ name, email })
+  }
+
+  @Mutation(() => DeleteUserPayload)
+  async deleteUser (@Arg('data') { id }: DeleteUserInput) {
+    return deleteUser({ id })
   }
 }

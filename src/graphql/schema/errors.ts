@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from 'type-graphql'
 
 export enum ErrorCode {
+  NOT_FOUND = 404,
   DUPLICATE_ENTRY = 1062
 }
 

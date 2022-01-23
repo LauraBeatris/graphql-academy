@@ -22,10 +22,31 @@ export const createUser = async ({
     }
   }
 
-  return dbClient.user.create({
-    data: {
-      name,
-      email
+  return {
+    user: await dbClient.user.create({
+      data: {
+        name,
+        email
+      }
+    })
+  }
+}
+
+export const deleteUser = async ({ id }: { id: string }) => {
+  const user = await dbClient.user.findUnique({
+    where: {
+      id
     }
   })
+
+  if (!user) {
+    return {
+      code: ErrorCode.NOT_FOUND,
+      message: 'User not found'
+    }
+  }
+
+  return {
+    user: await dbClient.user.delete({ where: { id } })
+  }
 }
