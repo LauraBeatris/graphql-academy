@@ -23,7 +23,5 @@ export class UserError {
     message: string
 
   @Field(() => ErrorCode)
-    code?: ErrorCode
-
-  path?: Array<string>
+    code: ErrorCode
 }

@@ -4,7 +4,7 @@ import { createUser, deleteUser, getAllUsers } from 'data/users'
 import { Post } from 'graphql/schema/Post.schema'
 import { PaginationArgs } from 'graphql/schema/sharedArguments'
 import { User } from 'graphql/schema/User.schema'
-import { UserError } from 'graphql/schema/UserError.schema'
+import { ErrorCode, UserError } from 'graphql/schema/UserError.schema'
 
 @ObjectType()
 class CreateUserSuccess {
@@ -12,18 +12,19 @@ class CreateUserSuccess {
     user: User
 }
 @ObjectType()
-class EmailTakenError {
+export class EmailTakenError implements UserError {
+  @Field(() => ErrorCode)
+    code: ErrorCode
+
+  @Field()
+    message: string
+
   @Field()
     emailWasTaken: boolean
 }
 const CreateUserPayload = createUnionType({
   name: 'CreateUserPayload',
-  types: () => [CreateUserSuccess, EmailTakenError, UserError] as const,
-  resolveType: mutationValue => {
-    if ('emailWasTaken' in mutationValue) return EmailTakenError
-    if ('code' in mutationValue) return UserError
-    if ('user' in mutationValue) return CreateUserSuccess
-  }
+  types: () => [CreateUserSuccess, EmailTakenError] as const
 })
 
 @InputType()
@@ -46,11 +47,7 @@ class DeleteUserSuccess {
 }
 const DeleteUserPayload = createUnionType({
   name: 'DeleteUserPayload',
-  types: () => [DeleteUserSuccess, UserError] as const,
-  resolveType: mutationValue => {
-    if ('code' in mutationValue) return UserError
-    if ('user' in mutationValue) return DeleteUserSuccess
-  }
+  types: () => [DeleteUserSuccess, UserError] as const
 })
 
 @Resolver(User)

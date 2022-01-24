@@ -1,4 +1,5 @@
-import { ErrorCode } from 'graphql/schema/UserError.schema'
+import { EmailTakenError } from 'graphql/resolvers/User.resolver'
+import { ErrorCode, UserError } from 'graphql/schema/UserError.schema'
 import { dbClient } from './config'
 
 export const getAllUsers = ({ take }: { take: number }) => (
@@ -15,11 +16,11 @@ export const createUser = async ({
   })
 
   if (existingUser) {
-    return {
+    return Object.assign(new EmailTakenError(), {
       code: ErrorCode.BAD_REQUEST,
       message: "There's an existing user with the provided email.",
       emailWasTaken: true
-    }
+    })
   }
 
   return {
@@ -40,10 +41,10 @@ export const deleteUser = async ({ id }: { id: string }) => {
   })
 
   if (!user) {
-    return {
+    return Object.assign(new UserError(), {
       code: ErrorCode.NOT_FOUND,
       message: 'User not found'
-    }
+    })
   }
 
   return {
