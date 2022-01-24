@@ -16,7 +16,6 @@ class EmailTakenError {
   @Field()
     emailWasTaken: boolean
 }
-
 const CreateUserPayload = createUnionType({
   name: 'CreateUserPayload',
   types: () => [CreateUserSuccess, EmailTakenError, UserError] as const,
@@ -35,13 +34,11 @@ class CreateUserInput implements Partial<User> {
   @Field()
     email: string
 }
-
 @InputType()
 class DeleteUserInput implements Partial<User> {
   @Field(() => ID)
     id: string
 }
-
 @ObjectType()
 class DeleteUserSuccess {
   @Field(() => User)

@@ -2,14 +2,17 @@ import { Field, ObjectType, registerEnumType } from 'type-graphql'
 
 export enum ErrorCode {
   NOT_FOUND = 404,
-  DUPLICATE_ENTRY = 1062
+  BAD_REQUEST = 400
 }
 
 registerEnumType(ErrorCode, {
   name: 'ErrorCode',
   valuesConfig: {
-    DUPLICATE_ENTRY: {
+    BAD_REQUEST: {
       description: 'Duplicated entry on the data source.'
+    },
+    NOT_FOUND: {
+      description: 'Requested data not found on the data source.'
     }
   }
 })

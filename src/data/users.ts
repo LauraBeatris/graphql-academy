@@ -16,7 +16,7 @@ export const createUser = async ({
 
   if (existingUser) {
     return {
-      code: ErrorCode.DUPLICATE_ENTRY,
+      code: ErrorCode.BAD_REQUEST,
       message: "There's an existing user with the provided email.",
       emailWasTaken: true
     }
