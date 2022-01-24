@@ -1,4 +1,4 @@
-import { ErrorCode } from 'graphql/schema/errors'
+import { ErrorCode } from 'graphql/schema/UserError.schema'
 import { dbClient } from './config'
 
 export const getAllUsers = ({ take }: { take: number }) => (

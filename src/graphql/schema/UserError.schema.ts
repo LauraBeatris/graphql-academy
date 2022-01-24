@@ -21,4 +21,6 @@ export class UserError {
 
   @Field(() => ErrorCode)
     code?: ErrorCode
+
+  path?: Array<string>
 }

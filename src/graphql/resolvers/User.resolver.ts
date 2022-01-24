@@ -1,10 +1,10 @@
 import { Arg, Args, createUnionType, Field, FieldResolver, ID, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
 import { getUserPosts } from 'data/posts'
 import { createUser, deleteUser, getAllUsers } from 'data/users'
-import { UserError } from 'graphql/schema/errors'
 import { Post } from 'graphql/schema/Post.schema'
 import { PaginationArgs } from 'graphql/schema/sharedArguments'
 import { User } from 'graphql/schema/User.schema'
+import { UserError } from 'graphql/schema/UserError.schema'
 
 @ObjectType()
 class CreateUserSuccess {
