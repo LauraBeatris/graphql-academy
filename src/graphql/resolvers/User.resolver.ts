@@ -12,7 +12,7 @@ class CreateUserSuccess {
     user: User
 }
 @ObjectType()
-export class EmailTakenError implements UserError {
+export class EmailTakenError implements Partial<UserError> {
   @Field(() => ErrorCode)
     code: ErrorCode
 
