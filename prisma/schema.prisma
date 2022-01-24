@@ -9,7 +9,7 @@ datasource db {
 
 model Post {
   id          String    @id @default(uuid())
-  title       String    @db.VarChar(255)
+  title       String    @unique @db.VarChar(255)
   authorId    String
   description String?
   isPublished Boolean   @default(false)
