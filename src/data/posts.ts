@@ -1,3 +1,5 @@
+import { PostTitleTakenError } from 'graphql/resolvers/Post.resolver'
+import { ErrorCode } from 'graphql/schema/UserError.schema'
 import { dbClient } from './config'
 
 export const getAllPosts = ({ take }: { take: number }) => (
@@ -21,3 +23,36 @@ export const getPostAuthor = ({ postId }: { postId: string }) => (
     }
   }).author()
 )
+
+export const createPost = async ({
+  title, description, authorId
+}: {
+  title: string;
+  authorId: string;
+  description: string;
+}) => {
+  const existingPost = await dbClient.post.findUnique({
+    where: {
+      title
+    }
+  })
+
+  if (existingPost) {
+    return Object.assign(new PostTitleTakenError(), {
+      code: ErrorCode.BAD_REQUEST,
+      message: "There's an existing post with the provided title.",
+      titleWasTaken: true
+    })
+  }
+
+  return {
+    post: await dbClient.post.create({
+      data: {
+        title,
+        authorId,
+        description,
+        isPublished: false
+      }
+    })
+  }
+}

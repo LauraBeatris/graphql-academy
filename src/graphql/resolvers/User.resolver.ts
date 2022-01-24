@@ -66,14 +66,14 @@ export class UserResolver {
   }
 
   @Mutation(() => CreateUserPayload)
-  async createUser (@Arg('data', {
+  createUser (@Arg('data', {
     description: 'Represents the input data needed to create a new user'
   }) { name, email }: CreateUserInput) {
     return createUser({ name, email })
   }
 
   @Mutation(() => DeleteUserPayload)
-  async deleteUser (@Arg('data') { id }: DeleteUserInput) {
+  deleteUser (@Arg('data') { id }: DeleteUserInput) {
     return deleteUser({ id })
   }
 }
