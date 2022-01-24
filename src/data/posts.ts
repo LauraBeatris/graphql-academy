@@ -1,5 +1,5 @@
 import { PostTitleTakenError } from 'graphql/resolvers/Post.resolver'
-import { ErrorCode } from 'graphql/schema/UserError.schema'
+import { ErrorCode, UserError } from 'graphql/schema/UserError.schema'
 import { dbClient } from './config'
 
 export const getAllPosts = ({ take }: { take: number }) => (
@@ -54,5 +54,24 @@ export const createPost = async ({
         isPublished: false
       }
     })
+  }
+}
+
+export const deletePost = async ({ id }: { id: string }) => {
+  const post = await dbClient.post.findUnique({
+    where: {
+      id
+    }
+  })
+
+  if (!post) {
+    return Object.assign(new UserError(), {
+      code: ErrorCode.NOT_FOUND,
+      message: 'Post not found'
+    })
+  }
+
+  return {
+    post: await dbClient.post.delete({ where: { id } })
   }
 }

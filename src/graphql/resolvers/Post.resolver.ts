@@ -1,6 +1,6 @@
-import { Arg, Args, createUnionType, Field, FieldResolver, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
+import { Arg, Args, createUnionType, Field, FieldResolver, ID, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
 import { getPostComments } from 'data/comments'
-import { createPost, getAllPosts, getPostAuthor } from 'data/posts'
+import { createPost, deletePost, getAllPosts, getPostAuthor } from 'data/posts'
 import { Comment } from 'graphql/schema/Comment.schema'
 import { Post } from 'graphql/schema/Post.schema'
 import { PaginationArgs } from 'graphql/schema/sharedArguments'
@@ -39,6 +39,21 @@ const CreatePostPayload = createUnionType({
   types: () => [CreatePostSuccess, PostTitleTakenError] as const
 })
 
+@InputType()
+class DeletePostInput implements Partial<User> {
+  @Field(() => ID)
+    id: string
+}
+@ObjectType()
+class DeletePostSuccess {
+  @Field(() => Post)
+    post: Post
+}
+const DeletePostPayload = createUnionType({
+  name: 'DeletePostPayload',
+  types: () => [DeletePostSuccess, UserError] as const
+})
+
 @Resolver(Post)
 export class PostResolver {
   @Query(() => [Post], { nullable: 'itemsAndList' })
@@ -64,5 +79,10 @@ export class PostResolver {
   @Mutation(() => CreatePostPayload)
   createPost (@Arg('data') { title, authorId, description }: CreatePostInput) {
     return createPost({ title, authorId, description })
+  }
+
+  @Mutation(() => DeletePostPayload)
+  deletePost (@Arg('data') { id }: DeletePostInput) {
+    return deletePost({ id })
   }
 }
