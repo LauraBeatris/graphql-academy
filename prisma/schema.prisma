@@ -21,7 +21,7 @@ model Post {
 
 model User {
   id        String    @id @default(uuid())
-  name      String    @db.VarChar(255)
+  name      String    @unique @db.VarChar(255)
   email     String    @unique @db.VarChar(255)
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   posts     Post[]
