@@ -1,6 +1,7 @@
+import { isInstance } from 'class-validator'
 import { Arg, Args, createUnionType, Field, FieldResolver, ID, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
 import { getPostComments } from 'data/comments'
-import { createPost, deletePost, getAllPosts, getPostAuthor } from 'data/posts'
+import { createPost, deletePost, getAllPosts, getPostAuthor, updatePost } from 'data/posts'
 import { PaginationArgs } from 'graphql/schema/arguments/pagination'
 import { ErrorCode } from 'graphql/schema/enums/errorCode'
 import { Comment } from 'graphql/schema/types/comment'
@@ -55,6 +56,35 @@ const DeletePostPayload = createUnionType({
   types: () => [DeletePostSuccess, UserError] as const
 })
 
+@InputType()
+class PublishPostInput implements Partial<User> {
+  @Field(() => ID)
+    id: string
+}
+@ObjectType()
+export class PublishPostSuccess {
+  @Field(() => Post)
+    post: Post
+}
+const PublishPostPayload = createUnionType({
+  name: 'PublishPostPayload',
+  types: () => [PublishPostSuccess, UserError] as const
+})
+@InputType()
+class UnpublishPostInput implements Partial<User> {
+  @Field(() => ID)
+    id: string
+}
+@ObjectType()
+export class UnpublishPostSuccess {
+  @Field(() => Post)
+    post: Post
+}
+const UnpublishPostPayload = createUnionType({
+  name: 'UnpublishPostPayload',
+  types: () => [UnpublishPostSuccess, UserError] as const
+})
+
 @Resolver(Post)
 export class PostResolver {
   @Query(() => [Post], { nullable: 'itemsAndList' })
@@ -85,5 +115,23 @@ export class PostResolver {
   @Mutation(() => DeletePostPayload)
   deletePost (@Arg('data') { id }: DeletePostInput) {
     return deletePost({ id })
+  }
+
+  @Mutation(() => PublishPostPayload)
+  async publishPost (@Arg('data') { id }: PublishPostInput) {
+    const updateResult = await updatePost(id, { isPublished: true })
+
+    if (updateResult instanceof UserError) return updateResult
+
+    return Object.assign(new PublishPostSuccess(), { post: updateResult })
+  }
+
+  @Mutation(() => UnpublishPostPayload)
+  async unpublishPost (@Arg('data') { id }: UnpublishPostInput) {
+    const updateResult = await updatePost(id, { isPublished: false })
+
+    if (updateResult instanceof UserError) return updateResult
+
+    return Object.assign(new UnpublishPostSuccess(), { post: updateResult })
   }
 }

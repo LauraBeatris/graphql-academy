@@ -1,5 +1,6 @@
 import { CreatePostSuccess, DeletePostSuccess, PostTitleTakenError } from 'graphql/resolvers/post'
 import { ErrorCode } from 'graphql/schema/enums/errorCode'
+import { Post } from 'graphql/schema/types/post'
 import { UserError } from 'graphql/schema/types/userError'
 import { dbClient } from './config'
 
@@ -60,9 +61,7 @@ export const createPost = async ({
 
 export const deletePost = async ({ id }: { id: string }) => {
   const post = await dbClient.post.findUnique({
-    where: {
-      id
-    }
+    where: { id }
   })
 
   if (!post) {
@@ -76,4 +75,26 @@ export const deletePost = async ({ id }: { id: string }) => {
   return Object.assign(new DeletePostSuccess(), {
     post: await dbClient.post.delete({ where: { id } })
   })
+}
+
+type UpdatePostData = Partial<Omit<Post, 'id' | 'authorId' | 'author' | 'comments'>>
+export const updatePost = async (id: string, data: UpdatePostData) => {
+  const post = await dbClient.post.findUnique({
+    where: { id }
+  })
+
+  if (!post) {
+    return Object.assign(new UserError(), {
+      code: ErrorCode.NOT_FOUND,
+      path: ['post', 'id'],
+      message: 'Post not found'
+    })
+  }
+
+  const updatedPost = await dbClient.post.update({
+    data,
+    where: { id }
+  })
+
+  return updatedPost
 }
