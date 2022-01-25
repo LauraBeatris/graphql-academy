@@ -68,6 +68,7 @@ export const deletePost = async ({ id }: { id: string }) => {
   if (!post) {
     return Object.assign(new UserError(), {
       code: ErrorCode.NOT_FOUND,
+      path: ['post', 'id'],
       message: 'Post not found'
     })
   }
