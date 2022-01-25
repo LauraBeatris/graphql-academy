@@ -23,9 +23,20 @@ export class EmailTakenError implements Partial<UserError> {
   @Field()
     emailWasTaken: boolean
 }
+@ObjectType()
+export class UserNameTakenError implements Partial<UserError> {
+  @Field(() => ErrorCode)
+    code: ErrorCode
+
+  @Field()
+    message: string
+
+  @Field()
+    suggestedUsername: string
+}
 const CreateUserPayload = createUnionType({
   name: 'CreateUserPayload',
-  types: () => [CreateUserSuccess, EmailTakenError] as const
+  types: () => [CreateUserSuccess, EmailTakenError, UserNameTakenError] as const
 })
 
 @InputType()
