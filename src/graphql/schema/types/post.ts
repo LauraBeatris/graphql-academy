@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from 'type-graphql'
-import { Comment } from './Comment.schema'
-import { User } from './User.schema'
+import { Comment } from './comment'
+import { User } from './user'
 
 @ObjectType({ description: 'Represents a blog post created by a User' })
 export class Post {

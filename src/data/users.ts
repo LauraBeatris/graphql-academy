@@ -1,5 +1,6 @@
-import { CreateUserSuccess, DeleteUserSuccess, EmailTakenError } from 'graphql/resolvers/User.resolver'
-import { ErrorCode, UserError } from 'graphql/schema/UserError.schema'
+import { CreateUserSuccess, DeleteUserSuccess, EmailTakenError } from 'graphql/resolvers/user'
+import { ErrorCode } from 'graphql/schema/enums/errorCode'
+import { UserError } from 'graphql/schema/types/userError'
 import { dbClient } from './config'
 
 export const getAllUsers = ({ take }: { take: number }) => (

@@ -1,5 +1,6 @@
-import { CreatePostSuccess, DeletePostSuccess, PostTitleTakenError } from 'graphql/resolvers/Post.resolver'
-import { ErrorCode, UserError } from 'graphql/schema/UserError.schema'
+import { CreatePostSuccess, DeletePostSuccess, PostTitleTakenError } from 'graphql/resolvers/post'
+import { ErrorCode } from 'graphql/schema/enums/errorCode'
+import { UserError } from 'graphql/schema/types/userError'
 import { dbClient } from './config'
 
 export const getAllPosts = ({ take }: { take: number }) => (

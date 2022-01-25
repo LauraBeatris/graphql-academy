@@ -1,11 +1,12 @@
 import { Arg, Args, createUnionType, Field, FieldResolver, ID, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
 import { getPostComments } from 'data/comments'
 import { createPost, deletePost, getAllPosts, getPostAuthor } from 'data/posts'
-import { Comment } from 'graphql/schema/Comment.schema'
-import { Post } from 'graphql/schema/Post.schema'
-import { PaginationArgs } from 'graphql/schema/sharedArguments'
-import { User } from 'graphql/schema/User.schema'
-import { ErrorCode, UserError } from 'graphql/schema/UserError.schema'
+import { PaginationArgs } from 'graphql/schema/arguments/pagination'
+import { ErrorCode } from 'graphql/schema/enums/errorCode'
+import { Comment } from 'graphql/schema/types/comment'
+import { Post } from 'graphql/schema/types/post'
+import { User } from 'graphql/schema/types/user'
+import { UserError } from 'graphql/schema/types/userError'
 
 @InputType()
 class CreatePostInput implements Partial<Post> {
