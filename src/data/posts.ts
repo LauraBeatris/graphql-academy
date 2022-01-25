@@ -1,6 +1,5 @@
-import { CreatePostSuccess, DeletePostSuccess, PostTitleTakenError } from 'graphql/resolvers/post'
 import { ErrorCode } from 'graphql/schema/enums/errorCode'
-import { Post } from 'graphql/schema/types/post'
+import { CreatePostSuccess, DeletePostSuccess, Post, PostTitleTakenError } from 'graphql/schema/types/post'
 import { UserError } from 'graphql/schema/types/userError'
 import { dbClient } from './config'
 

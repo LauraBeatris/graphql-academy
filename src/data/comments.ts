@@ -1,5 +1,5 @@
-import { CreateCommentSuccess, DeleteCommentSuccess } from 'graphql/resolvers/comment'
 import { ErrorCode } from 'graphql/schema/enums/errorCode'
+import { CreateCommentSuccess, DeleteCommentSuccess } from 'graphql/schema/types/comment'
 import { UserError } from 'graphql/schema/types/userError'
 import { dbClient } from './config'
 
