@@ -19,7 +19,7 @@ class CreatePostInput implements Partial<Post> {
     description?: string
 }
 @ObjectType()
-class CreatePostSuccess {
+export class CreatePostSuccess {
   @Field(() => Post)
     post: Post
 }
@@ -32,7 +32,7 @@ export class PostTitleTakenError implements Partial<UserError> {
     message: string
 
   @Field()
-    titleWasTaken: boolean
+    postTitleWasTaken: boolean
 }
 const CreatePostPayload = createUnionType({
   name: 'CreatePostPayload',
@@ -45,7 +45,7 @@ class DeletePostInput implements Partial<User> {
     id: string
 }
 @ObjectType()
-class DeletePostSuccess {
+export class DeletePostSuccess {
   @Field(() => Post)
     post: Post
 }

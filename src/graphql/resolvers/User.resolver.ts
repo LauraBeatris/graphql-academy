@@ -7,7 +7,7 @@ import { User } from 'graphql/schema/User.schema'
 import { ErrorCode, UserError } from 'graphql/schema/UserError.schema'
 
 @ObjectType()
-class CreateUserSuccess {
+export class CreateUserSuccess {
   @Field(() => User)
     user: User
 }
@@ -41,7 +41,7 @@ class DeleteUserInput implements Partial<User> {
     id: string
 }
 @ObjectType()
-class DeleteUserSuccess {
+export class DeleteUserSuccess {
   @Field(() => User)
     user: User
 }

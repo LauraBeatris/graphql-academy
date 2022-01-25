@@ -1,4 +1,4 @@
-import { PostTitleTakenError } from 'graphql/resolvers/Post.resolver'
+import { CreatePostSuccess, DeletePostSuccess, PostTitleTakenError } from 'graphql/resolvers/Post.resolver'
 import { ErrorCode, UserError } from 'graphql/schema/UserError.schema'
 import { dbClient } from './config'
 
@@ -41,11 +41,11 @@ export const createPost = async ({
     return Object.assign(new PostTitleTakenError(), {
       code: ErrorCode.BAD_REQUEST,
       message: "There's an existing post with the provided title.",
-      titleWasTaken: true
+      postTitleWasTaken: true
     })
   }
 
-  return {
+  return Object.assign(new CreatePostSuccess(), {
     post: await dbClient.post.create({
       data: {
         title,
@@ -54,7 +54,7 @@ export const createPost = async ({
         isPublished: false
       }
     })
-  }
+  })
 }
 
 export const deletePost = async ({ id }: { id: string }) => {
@@ -71,7 +71,7 @@ export const deletePost = async ({ id }: { id: string }) => {
     })
   }
 
-  return {
+  return Object.assign(new DeletePostSuccess(), {
     post: await dbClient.post.delete({ where: { id } })
-  }
+  })
 }

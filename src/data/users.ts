@@ -1,4 +1,4 @@
-import { EmailTakenError } from 'graphql/resolvers/User.resolver'
+import { CreateUserSuccess, DeleteUserSuccess, EmailTakenError } from 'graphql/resolvers/User.resolver'
 import { ErrorCode, UserError } from 'graphql/schema/UserError.schema'
 import { dbClient } from './config'
 
@@ -23,14 +23,14 @@ export const createUser = async ({
     })
   }
 
-  return {
+  return Object.assign(new CreateUserSuccess(), {
     user: await dbClient.user.create({
       data: {
         name,
         email
       }
     })
-  }
+  })
 }
 
 export const deleteUser = async ({ id }: { id: string }) => {
@@ -47,7 +47,7 @@ export const deleteUser = async ({ id }: { id: string }) => {
     })
   }
 
-  return {
+  return Object.assign(new DeleteUserSuccess(), {
     user: await dbClient.user.delete({ where: { id } })
-  }
+  })
 }
