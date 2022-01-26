@@ -1,5 +1,5 @@
-import { CommentResolver } from './Comment.resolver'
-import { PostResolver } from './Post.resolver'
-import { UserResolver } from './User.resolver'
+import { CommentResolver } from './comment'
+import { PostResolver } from './post'
+import { UserResolver } from './user'
 
 export { UserResolver, PostResolver, CommentResolver }

@@ -9,19 +9,19 @@ datasource db {
 
 model Post {
   id          String    @id @default(uuid())
-  title       String    @db.VarChar(255)
+  title       String    @unique @db.VarChar(255)
   authorId    String
   description String?
   isPublished Boolean   @default(false)
   createdAt   DateTime  @default(now()) @db.Timestamp(6)
-  author      User      @relation(fields: [authorId], references: [id])
-  comments    Comment[]
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments    Comment[] 
   @@map("posts")
 }
 
 model User {
   id        String    @id @default(uuid())
-  name      String    @db.VarChar(255)
+  name      String    @unique @db.VarChar(255)
   email     String    @unique @db.VarChar(255)
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   posts     Post[]
@@ -32,10 +32,10 @@ model User {
 model Comment {
   id        String   @id @default(uuid())
   text      String?  @db.VarChar(255)
-  postId    String
+  postId    String 
   authorId  String
   createdAt DateTime @default(now()) @db.Timestamp(6)
-  author    User     @relation(fields: [authorId], references: [id])
-  post      Post?    @relation(fields: [postId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   @@map("comments")
 }
