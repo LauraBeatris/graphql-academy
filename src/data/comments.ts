@@ -1,6 +1,4 @@
-import { ErrorCode } from 'graphql/schema/enums/errorCode'
-import { CreateCommentSuccess, DeleteCommentSuccess } from 'graphql/schema/types/comment'
-import { UserError } from 'graphql/schema/types/userError'
+import { NotFoundError } from 'errors'
 import { dbClient } from './config'
 
 export const getAllComments = ({ take }: { take: number }) => (
@@ -36,9 +34,8 @@ export const createComment = async ({ text, postId, authorId }: {
     }
   })
   if (!post) {
-    return Object.assign(new UserError(), {
-      code: ErrorCode.NOT_FOUND,
-      path: ['comment', 'post', 'id'],
+    throw new NotFoundError({
+      path: ['createComment'],
       message: 'Not able to find a post with the postId provided.'
     })
   }
@@ -49,21 +46,18 @@ export const createComment = async ({ text, postId, authorId }: {
     }
   })
   if (!author) {
-    return Object.assign(new UserError(), {
-      code: ErrorCode.NOT_FOUND,
-      path: ['comment', 'user', 'id'],
+    throw new NotFoundError({
+      path: ['createComment'],
       message: 'Not able to find an user with the authorId provided.'
     })
   }
 
-  return Object.assign(new CreateCommentSuccess(), {
-    comment: await dbClient.comment.create({
-      data: {
-        text,
-        postId,
-        authorId
-      }
-    })
+  return dbClient.comment.create({
+    data: {
+      text,
+      postId,
+      authorId
+    }
   })
 }
 
@@ -75,14 +69,11 @@ export const deleteComment = async ({ id }: { id: string }) => {
   })
 
   if (!comment) {
-    return Object.assign(new UserError(), {
-      code: ErrorCode.NOT_FOUND,
-      path: ['comment', 'id'],
+    throw new NotFoundError({
+      path: ['deleteComment'],
       message: 'Comment not found'
     })
   }
 
-  return Object.assign(new DeleteCommentSuccess(), {
-    comment: await dbClient.comment.delete({ where: { id } })
-  })
+  return dbClient.comment.delete({ where: { id } })
 }

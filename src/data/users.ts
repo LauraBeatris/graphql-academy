@@ -1,6 +1,4 @@
-import { CreateUserSuccess, DeleteUserSuccess, EmailTakenError, UserNameTakenError } from 'graphql/resolvers/user'
-import { ErrorCode } from 'graphql/schema/enums/errorCode'
-import { UserError } from 'graphql/schema/types/userError'
+import { BadRequestError, NotFoundError } from 'errors'
 import { dbClient } from './config'
 
 export const getAllUsers = ({ take }: { take: number }) => (
@@ -23,11 +21,13 @@ export const createUser = async ({
       email
     }
   })
+
   if (existingUserByEmail) {
-    return Object.assign(new EmailTakenError(), {
-      code: ErrorCode.BAD_REQUEST,
-      message: "There's an existing user with the provided email.",
-      emailWasTaken: true
+    throw new BadRequestError({
+      message: 'Email provided is already taken.',
+      metadata: {
+        emailWasTaken: true
+      }
     })
   }
 
@@ -37,20 +37,19 @@ export const createUser = async ({
     }
   })
   if (existingUserByUserName) {
-    return Object.assign(new UserNameTakenError(), {
-      code: ErrorCode.BAD_REQUEST,
-      message: "There's an existing user with the provided username.",
-      suggestedUsername: generateSuggestedUsername(name)
+    throw new BadRequestError({
+      message: 'Username provided is already taken.',
+      metadata: {
+        suggestedUsername: generateSuggestedUsername(name)
+      }
     })
   }
 
-  return Object.assign(new CreateUserSuccess(), {
-    user: await dbClient.user.create({
-      data: {
-        name,
-        email
-      }
-    })
+  return dbClient.user.create({
+    data: {
+      name,
+      email
+    }
   })
 }
 
@@ -62,14 +61,11 @@ export const deleteUser = async ({ id }: { id: string }) => {
   })
 
   if (!user) {
-    return Object.assign(new UserError(), {
-      code: ErrorCode.NOT_FOUND,
-      path: ['user', 'id'],
+    throw new NotFoundError({
+      path: ['deleteUser'],
       message: 'User not found'
     })
   }
 
-  return Object.assign(new DeleteUserSuccess(), {
-    user: await dbClient.user.delete({ where: { id } })
-  })
+  return dbClient.user.delete({ where: { id } })
 }

@@ -1,43 +1,11 @@
+import { handleResolverError } from 'errors'
 import { Arg, Args, createUnionType, Field, FieldResolver, ID, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
 import { getUserPosts } from 'data/posts'
 import { createUser, deleteUser, getAllUsers } from 'data/users'
 import { PaginationArgs } from 'graphql/schema/arguments/pagination'
-import { ErrorCode } from 'graphql/schema/enums/errorCode'
 import { Post } from 'graphql/schema/types/post'
-import { User } from 'graphql/schema/types/user'
+import { CreateUserPayload, CreateUserSuccess, EmailTakenError, User, UserNameTakenError } from 'graphql/schema/types/user'
 import { UserError } from 'graphql/schema/types/userError'
-
-@ObjectType()
-export class CreateUserSuccess {
-  @Field(() => User)
-    user: User
-}
-@ObjectType()
-export class EmailTakenError implements Partial<UserError> {
-  @Field(() => ErrorCode)
-    code: ErrorCode
-
-  @Field()
-    message: string
-
-  @Field()
-    emailWasTaken: boolean
-}
-@ObjectType()
-export class UserNameTakenError implements Partial<UserError> {
-  @Field(() => ErrorCode)
-    code: ErrorCode
-
-  @Field()
-    message: string
-
-  @Field()
-    suggestedUsername: string
-}
-const CreateUserPayload = createUnionType({
-  name: 'CreateUserPayload',
-  types: () => [CreateUserSuccess, EmailTakenError, UserNameTakenError] as const
-})
 
 @InputType()
 class CreateUserInput implements Partial<User> {
@@ -78,14 +46,55 @@ export class UserResolver {
   }
 
   @Mutation(() => CreateUserPayload)
-  createUser (@Arg('data', {
+  async createUser (@Arg('data', {
     description: 'Represents the input data needed to create a new user'
   }) { name, email }: CreateUserInput) {
-    return createUser({ name, email })
+    try {
+      return Object.assign(new CreateUserSuccess(), {
+        user: await createUser({ name, email })
+      })
+    } catch (error) {
+      return handleResolverError(error, () => {
+        const {
+          path,
+          code,
+          message,
+          metadata: { suggestedUsername, emailWasTaken }
+        } = error
+
+        if (suggestedUsername) {
+          return Object.assign(new UserNameTakenError(), {
+            code,
+            message,
+            suggestedUsername
+          })
+        }
+
+        if (emailWasTaken) {
+          return Object.assign(new EmailTakenError(), {
+            code,
+            message,
+            emailWasTaken
+          })
+        }
+
+        return Object.assign(new UserError(), { code, path, message })
+      })
+    }
   }
 
   @Mutation(() => DeleteUserPayload)
-  deleteUser (@Arg('data') { id }: DeleteUserInput) {
-    return deleteUser({ id })
+  async deleteUser (@Arg('data') { id }: DeleteUserInput) {
+    try {
+      return {
+        user: await deleteUser({ id })
+      }
+    } catch (error) {
+      return handleResolverError(error, () => {
+        const { code, path, message } = error
+
+        return Object.assign(new UserError(), { code, path, message })
+      })
+    }
   }
 }

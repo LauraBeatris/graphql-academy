@@ -1,6 +1,5 @@
-import { ErrorCode } from 'graphql/schema/enums/errorCode'
-import { CreatePostSuccess, DeletePostSuccess, Post, PostTitleTakenError } from 'graphql/schema/types/post'
-import { UserError } from 'graphql/schema/types/userError'
+import { BadRequestError, NotFoundError } from 'errors'
+import { Post } from 'graphql/schema/types/post'
 import { dbClient } from './config'
 
 export const getAllPosts = ({ take }: { take: number }) => (
@@ -32,6 +31,18 @@ export const createPost = async ({
   authorId: string;
   description: string;
 }) => {
+  const author = await dbClient.user.findUnique({
+    where: {
+      id: authorId
+    }
+  })
+  if (!author) {
+    throw new NotFoundError({
+      path: ['createPost'],
+      message: 'Not able to find an user with the authorId provided.'
+    })
+  }
+
   const existingPost = await dbClient.post.findUnique({
     where: {
       title
@@ -39,22 +50,21 @@ export const createPost = async ({
   })
 
   if (existingPost) {
-    return Object.assign(new PostTitleTakenError(), {
-      code: ErrorCode.BAD_REQUEST,
-      message: "There's an existing post with the provided title.",
-      postTitleWasTaken: true
+    throw new BadRequestError({
+      message: 'Post title provided is already taken.',
+      metadata: {
+        postTitleWasTaken: true
+      }
     })
   }
 
-  return Object.assign(new CreatePostSuccess(), {
-    post: await dbClient.post.create({
-      data: {
-        title,
-        authorId,
-        description,
-        isPublished: false
-      }
-    })
+  return dbClient.post.create({
+    data: {
+      title,
+      authorId,
+      description,
+      isPublished: false
+    }
   })
 }
 
@@ -64,16 +74,13 @@ export const deletePost = async ({ id }: { id: string }) => {
   })
 
   if (!post) {
-    return Object.assign(new UserError(), {
-      code: ErrorCode.NOT_FOUND,
-      path: ['post', 'id'],
+    throw new NotFoundError({
+      path: ['deletePost'],
       message: 'Post not found'
     })
   }
 
-  return Object.assign(new DeletePostSuccess(), {
-    post: await dbClient.post.delete({ where: { id } })
-  })
+  return dbClient.post.delete({ where: { id } })
 }
 
 type UpdatePostData = Partial<Omit<Post, 'id' | 'authorId' | 'author' | 'comments'>>
@@ -83,9 +90,8 @@ export const updatePost = async (id: string, data: UpdatePostData) => {
   })
 
   if (!post) {
-    return Object.assign(new UserError(), {
-      code: ErrorCode.NOT_FOUND,
-      path: ['post', 'id'],
+    throw new NotFoundError({
+      path: ['updatePost'],
       message: 'Post not found'
     })
   }

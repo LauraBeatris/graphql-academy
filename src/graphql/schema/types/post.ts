@@ -54,7 +54,7 @@ export class PostTitleTakenError implements Partial<UserError> {
 }
 export const CreatePostPayload = createUnionType({
   name: 'CreatePostPayload',
-  types: () => [CreatePostSuccess, PostTitleTakenError] as const
+  types: () => [CreatePostSuccess, PostTitleTakenError, UserError] as const
 })
 
 @InputType()
