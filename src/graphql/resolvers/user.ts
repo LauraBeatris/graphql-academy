@@ -1,34 +1,11 @@
 import { handleResolverError } from 'errors'
-import { Arg, Args, createUnionType, Field, FieldResolver, ID, InputType, Mutation, ObjectType, Query, Resolver, Root } from 'type-graphql'
+import { Arg, Args, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql'
 import { getUserPosts } from 'data/posts'
 import { createUser, deleteUser, getAllUsers } from 'data/users'
 import { PaginationArgs } from 'graphql/schema/arguments/pagination'
 import { Post } from 'graphql/schema/types/post'
-import { CreateUserPayload, CreateUserSuccess, EmailTakenError, User, UserNameTakenError } from 'graphql/schema/types/user'
+import { CreateUserInput, CreateUserPayload, CreateUserSuccess, DeleteUserInput, DeleteUserPayload, EmailTakenError, User, UserNameTakenError } from 'graphql/schema/types/user'
 import { UserError } from 'graphql/schema/types/userError'
-
-@InputType()
-class CreateUserInput implements Partial<User> {
-  @Field()
-    name: string
-
-  @Field()
-    email: string
-}
-@InputType()
-class DeleteUserInput implements Partial<User> {
-  @Field(() => ID)
-    id: string
-}
-@ObjectType()
-export class DeleteUserSuccess {
-  @Field(() => User)
-    user: User
-}
-const DeleteUserPayload = createUnionType({
-  name: 'DeleteUserPayload',
-  types: () => [DeleteUserSuccess, UserError] as const
-})
 
 @Resolver(User)
 export class UserResolver {
