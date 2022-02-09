@@ -15,7 +15,7 @@ Not every topic from the workshop will be referenced here, but I'll try as much 
 to link implementations so that you can use as a basis for your personal project / challenges proposed on each class 
 
 - [Initial GraphQL API setup with Apollo Server](https://github.com/LauraBeatris/graphql-academy/pull/1)
-- [Schema implementation using TypeGraphQL](https://github.com/LauraBeatris/graphql-academy/tree/main/src/graphql/schema)
+- [Schema implementation using TypeGraphQL (Annotation-based implementation)](https://github.com/LauraBeatris/graphql-academy/tree/main/src/graphql/schema)
 - [Resolvers + data layer with Prisma](https://github.com/LauraBeatris/graphql-academy/pull/3)
 - [Reproducing N+1 issue](https://github.com/LauraBeatris/graphql-academy/pull/4)
 - [Mutations with payload, input types and error as data handling](https://github.com/LauraBeatris/graphql-academy/pull/6)
