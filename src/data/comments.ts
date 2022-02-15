@@ -1,18 +1,18 @@
 import { NotFoundError } from 'errors'
 import { dbClient } from './config'
 
-export const getAllComments = ({ take }: { take: number }) => (
-  dbClient.comment.findMany({ take })
+export const getAllComments = ({ take, skip }: { take: number, skip: number }) => (
+  dbClient.comment.findMany({ take, skip })
 )
 
 export const getPostComments = ({
-  postId, take
-}: { postId: string, take: number }) => (
+  postId, take, skip
+}: { postId: string, take: number, skip: number }) => (
   dbClient.post.findUnique({
     where: {
       id: postId
     }
-  }).comments({ take })
+  }).comments({ take, skip })
 )
 
 export const getCommentAuthor = ({ commentId }: { commentId: string }) => (

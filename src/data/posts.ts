@@ -2,18 +2,18 @@ import { BadRequestError, NotFoundError } from 'errors'
 import { Post } from 'graphql/schema/types/post'
 import { dbClient } from './config'
 
-export const getAllPosts = ({ take }: { take: number }) => (
-  dbClient.post.findMany({ take })
+export const getAllPosts = ({ take, skip }: { take: number, skip: number }) => (
+  dbClient.post.findMany({ take, skip })
 )
 
 export const getUserPosts = ({
-  userId, take
-}: { userId: string, take: number }) => (
+  userId, take, skip
+}: { userId: string, take: number, skip: number }) => (
   dbClient.user.findUnique({
     where: {
       id: userId
     }
-  }).posts({ take })
+  }).posts({ take, skip })
 )
 
 export const getPostAuthor = ({ postId }: { postId: string }) => (

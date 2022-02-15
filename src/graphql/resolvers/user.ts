@@ -2,7 +2,7 @@ import { handleResolverError } from 'errors'
 import { Arg, Args, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql'
 import { getUserPosts } from 'data/posts'
 import { createUser, deleteUser, getAllUsers } from 'data/users'
-import { PaginationArgs } from 'graphql/schema/arguments/pagination'
+import { OffsetPaginationArgs } from 'graphql/schema/arguments/pagination'
 import { Post } from 'graphql/schema/types/post'
 import { CreateUserInput, CreateUserPayload, CreateUserSuccess, DeleteUserInput, DeleteUserPayload, EmailTakenError, User, UserNameTakenError } from 'graphql/schema/types/user'
 import { UserError } from 'graphql/schema/types/userError'
@@ -10,16 +10,16 @@ import { UserError } from 'graphql/schema/types/userError'
 @Resolver(User)
 export class UserResolver {
   @Query(() => [User], { nullable: 'itemsAndList' })
-  users (@Args() { take }: PaginationArgs) {
-    return getAllUsers({ take })
+  users (@Args() { take, skip }: OffsetPaginationArgs) {
+    return getAllUsers({ take, skip })
   }
 
   @FieldResolver(() => [Post], { nullable: 'itemsAndList' })
   posts (
     @Root() { id: userId }: User,
-    @Args() { take }: PaginationArgs
+    @Args() { take, skip }: OffsetPaginationArgs
   ) {
-    return getUserPosts({ userId, take })
+    return getUserPosts({ userId, take, skip })
   }
 
   @Mutation(() => CreateUserPayload)

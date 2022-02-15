@@ -1,8 +1,8 @@
 import { BadRequestError, NotFoundError } from 'errors'
 import { dbClient } from './config'
 
-export const getAllUsers = ({ take }: { take: number }) => (
-  dbClient.user.findMany({ take })
+export const getAllUsers = ({ take, skip }: { take: number, skip: number }) => (
+  dbClient.user.findMany({ take, skip })
 )
 
 const usernameRandomSuggestions = ['aachen', 'aalbord', 'aaelsund', '3d', '2d', 'aaren', 'aargau', 'aarhus', 'aarika']
