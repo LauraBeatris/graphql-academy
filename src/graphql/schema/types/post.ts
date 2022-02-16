@@ -1,5 +1,6 @@
 import { createUnionType, Field, ID, InputType, ObjectType } from 'type-graphql'
 import { Comment } from './comment'
+import { ConnectionType, EdgeType } from './pagination'
 import { User } from './user'
 import { UserError } from './userError'
 import { ErrorCode } from '../enums/errorCode'
@@ -24,6 +25,10 @@ export class Post {
   @Field(() => [Comment], { nullable: 'itemsAndList' })
     comments?: Comment[]
 }
+@ObjectType()
+export class PostEdge extends EdgeType('post', Post) {}
+@ObjectType()
+export class PostConnection extends ConnectionType('post', PostEdge) {}
 
 @InputType()
 export class CreatePostInput implements Partial<Post> {

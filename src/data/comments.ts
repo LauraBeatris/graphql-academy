@@ -1,13 +1,14 @@
 import { NotFoundError } from 'errors'
+import { OffsetPaginationArgs } from 'graphql/schema/types/pagination'
 import { dbClient } from './config'
 
-export const getAllComments = ({ take, skip }: { take: number, skip: number }) => (
+export const getAllComments = ({ take, skip }: OffsetPaginationArgs) => (
   dbClient.comment.findMany({ take, skip })
 )
 
 export const getPostComments = ({
   postId, take, skip
-}: { postId: string, take: number, skip: number }) => (
+}: { postId: string } & OffsetPaginationArgs) => (
   dbClient.post.findUnique({
     where: {
       id: postId

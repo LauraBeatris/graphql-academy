@@ -2,6 +2,7 @@ import { Max, Min } from 'class-validator'
 import * as Relay from 'graphql-relay'
 
 import { ArgsType, ClassType, Field, Int, ObjectType } from 'type-graphql'
+import { dbClient } from 'data/config'
 
 @ArgsType()
 export class OffsetPaginationArgs {
@@ -24,35 +25,20 @@ export class ConnectionArgs implements Relay.ConnectionArguments {
   })
     after?: Relay.ConnectionCursor
 
-  @Field(() => String, {
-    nullable: true,
-    description: 'Paginate before cursor'
-  })
-    before?: Relay.ConnectionCursor
-
   @Field(() => Number, { nullable: true, description: 'Paginate first' })
     first?: number
-
-  @Field(() => Number, { nullable: true, description: 'Paginate last' })
-    last?: number
 }
 
 /**
  * Field that contains metadata about the pagination itself
  */
 @ObjectType()
-export class PageInfo implements Relay.PageInfo {
+export class PageInfo implements Partial<Relay.PageInfo> {
   @Field(() => Boolean)
     hasNextPage: boolean
 
-  @Field(() => Boolean)
-    hasPreviousPage: boolean
-
   @Field(() => String, { nullable: true })
     endCursor: string
-
-  @Field(() => String, { nullable: true })
-    startCursor: string
 }
 
 /**
@@ -85,7 +71,7 @@ export function ConnectionType<
   NodeType = ExtractNodeType<EdgeType>
 > (nodeName: string, edgeClass: ClassType<EdgeType>) {
   @ObjectType(`${nodeName}Connection`, { isAbstract: true })
-  abstract class Connection implements Relay.Connection<NodeType> {
+  abstract class Connection implements Omit<Relay.Connection<NodeType>, 'pageInfo'> {
     @Field(() => PageInfo)
       pageInfo: PageInfo
 
@@ -94,4 +80,38 @@ export function ConnectionType<
   }
 
   return Connection
+}
+
+export const transformDataToConnection = async <T extends { id: string }>({
+  data, first, nodeName
+}: { data: T[], first: ConnectionArgs['first'], nodeName: string }) => {
+  if (!data.length) {
+    return {
+      pageInfo: {
+        endCursor: null,
+        hasNextPage: false
+      },
+      edges: []
+    }
+  }
+
+  const lastLinkInResults = data[data.length - 1]
+  const myCursor = lastLinkInResults.id
+  const secondQueryResults = await dbClient[nodeName].findMany({
+    take: first,
+    cursor: {
+      id: myCursor
+    }
+  })
+
+  return {
+    pageInfo: {
+      endCursor: myCursor,
+      hasNextPage: secondQueryResults.length >= first
+    },
+    edges: data.map(node => ({
+      cursor: node.id,
+      node
+    }))
+  }
 }
