@@ -1,16 +1,16 @@
 import { handleResolverError } from 'errors'
 import { Arg, Args, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql'
 import { createComment, deleteComment, getAllComments, getCommentAuthor } from 'data/comments'
-import { PaginationArgs } from 'graphql/schema/arguments/pagination'
 import { Comment, CreateCommentInput, CreateCommentPayload, CreateCommentSuccess, DeleteCommentInput, DeleteCommentPayload, DeleteCommentSuccess } from 'graphql/schema/types/comment'
+import { OffsetPaginationArgs } from 'graphql/schema/types/pagination'
 import { User } from 'graphql/schema/types/user'
 import { UserError } from 'graphql/schema/types/userError'
 
 @Resolver(Comment)
 export class CommentResolver {
   @Query(() => [Comment], { nullable: 'itemsAndList' })
-  comments (@Args() { take }: PaginationArgs) {
-    return getAllComments({ take })
+  comments (@Args() { take, skip }: OffsetPaginationArgs) {
+    return getAllComments({ take, skip })
   }
 
   @FieldResolver(() => User, { nullable: true })

@@ -2,25 +2,29 @@ import { handleResolverError } from 'errors'
 import { Arg, Args, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql'
 import { getPostComments } from 'data/comments'
 import { createPost, deletePost, getAllPosts, getPostAuthor, updatePost } from 'data/posts'
-import { PaginationArgs } from 'graphql/schema/arguments/pagination'
 import { Comment } from 'graphql/schema/types/comment'
-import { CreatePostInput, CreatePostPayload, CreatePostSuccess, DeletePostInput, DeletePostPayload, DeletePostSuccess, Post, PostTitleTakenError, PublishPostInput, PublishPostPayload, PublishPostSuccess, UnpublishPostInput, UnpublishPostPayload, UnpublishPostSuccess } from 'graphql/schema/types/post'
+import { ConnectionArgs, OffsetPaginationArgs, transformDataToConnection } from 'graphql/schema/types/pagination'
+import { CreatePostInput, CreatePostPayload, CreatePostSuccess, DeletePostInput, DeletePostPayload, DeletePostSuccess, Post, PostConnection, PostTitleTakenError, PublishPostInput, PublishPostPayload, PublishPostSuccess, UnpublishPostInput, UnpublishPostPayload, UnpublishPostSuccess } from 'graphql/schema/types/post'
 import { User } from 'graphql/schema/types/user'
 import { UserError } from 'graphql/schema/types/userError'
 
 @Resolver(Post)
 export class PostResolver {
-  @Query(() => [Post], { nullable: 'itemsAndList' })
-  posts (@Args() { take }: PaginationArgs) {
-    return getAllPosts({ take })
+  @Query(() => PostConnection)
+  async posts (@Args() { after, first }: ConnectionArgs) {
+    return transformDataToConnection({
+      data: await getAllPosts({ after, first }),
+      first,
+      nodeName: 'post'
+    })
   }
 
   @FieldResolver(() => [Comment], { nullable: 'itemsAndList' })
   comments (
     @Root() { id: postId }: Post,
-    @Args() { take }: PaginationArgs
+    @Args() { take, skip }: OffsetPaginationArgs
   ) {
-    return getPostComments({ postId, take })
+    return getPostComments({ postId, take, skip })
   }
 
   @FieldResolver(() => User, { nullable: true })

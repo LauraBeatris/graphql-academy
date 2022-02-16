@@ -1,19 +1,37 @@
 import { BadRequestError, NotFoundError } from 'errors'
+import { ConnectionArgs, OffsetPaginationArgs } from 'graphql/schema/types/pagination'
 import { Post } from 'graphql/schema/types/post'
 import { dbClient } from './config'
 
-export const getAllPosts = ({ take }: { take: number }) => (
-  dbClient.post.findMany({ take })
-)
+export const getAllPosts = ({ after, first }: ConnectionArgs) => {
+  /**
+   * If there's no cursor, this means that this is the first requests,
+   * and we will return the first items in the database
+   */
+  const isFirstRequest = !after
+  if (isFirstRequest) {
+    return dbClient.post.findMany({
+      take: first,
+      skip: 1,
+      cursor: {
+        id: after
+      }
+    })
+  } else {
+    return dbClient.post.findMany({
+      take: first
+    })
+  }
+}
 
 export const getUserPosts = ({
-  userId, take
-}: { userId: string, take: number }) => (
+  userId, take, skip
+}: { userId: string } & OffsetPaginationArgs) => (
   dbClient.user.findUnique({
     where: {
       id: userId
     }
-  }).posts({ take })
+  }).posts({ take, skip })
 )
 
 export const getPostAuthor = ({ postId }: { postId: string }) => (

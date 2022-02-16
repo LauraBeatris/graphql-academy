@@ -1,8 +1,9 @@
 import { BadRequestError, NotFoundError } from 'errors'
+import { OffsetPaginationArgs } from 'graphql/schema/types/pagination'
 import { dbClient } from './config'
 
-export const getAllUsers = ({ take }: { take: number }) => (
-  dbClient.user.findMany({ take })
+export const getAllUsers = ({ take, skip }: OffsetPaginationArgs) => (
+  dbClient.user.findMany({ take, skip })
 )
 
 const usernameRandomSuggestions = ['aachen', 'aalbord', 'aaelsund', '3d', '2d', 'aaren', 'aargau', 'aarhus', 'aarika']
