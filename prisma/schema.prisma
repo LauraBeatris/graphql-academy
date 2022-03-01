@@ -12,6 +12,7 @@ model Post {
   title       String    @unique @db.VarChar(255)
   authorId    String
   description String?
+  brandName   String?
   isPublished Boolean   @default(false)
   createdAt   DateTime  @default(now()) @db.Timestamp(6)
   author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
