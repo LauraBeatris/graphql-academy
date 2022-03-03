@@ -7,15 +7,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Brand {
+  id          String    @id @default(uuid())
+  name        String
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  posts       Post[]
+  @@map("brands")
+}
+
 model Post {
   id          String    @id @default(uuid())
   title       String    @unique @db.VarChar(255)
   authorId    String
+  brandId     String?
   description String?
-  brandName   String?
   isPublished Boolean   @default(false)
   createdAt   DateTime  @default(now()) @db.Timestamp(6)
-  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  brand       Brand?     @relation(fields: [brandId], references: [id], onDelete: Cascade) 
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments    Comment[] 
   @@map("posts")
 }
