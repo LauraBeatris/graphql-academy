@@ -42,6 +42,10 @@ export const getPostAuthor = ({ postId }: { postId: string }) => (
   }).author()
 )
 
+export const getPostBrand = ({ brandId }: { brandId: string }) => (
+  dbClient.post.findUnique({ where: { id: brandId } }).brand()
+)
+
 export const createPost = async ({
   title, description, authorId
 }: {
