@@ -11,15 +11,15 @@ export const getAllPosts = ({ after, first }: ConnectionArgs) => {
   const isFirstRequest = !after
   if (isFirstRequest) {
     return dbClient.post.findMany({
+      take: first
+    })
+  } else {
+    return dbClient.post.findMany({
       take: first,
       skip: 1,
       cursor: {
         id: after
       }
-    })
-  } else {
-    return dbClient.post.findMany({
-      take: first
     })
   }
 }
