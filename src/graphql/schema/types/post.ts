@@ -1,12 +1,22 @@
-import { createUnionType, Field, ID, InputType, ObjectType } from 'type-graphql'
+import { createUnionType, Field, ID, InputType, InterfaceType, ObjectType } from 'type-graphql'
+import { Brand } from './brand'
 import { Comment } from './comment'
 import { ConnectionType, EdgeType } from './pagination'
 import { User } from './user'
 import { UserError } from './userError'
 import { ErrorCode } from '../enums/errorCode'
 
-@ObjectType({ description: 'Represents a blog post created by a User' })
-export class Post {
+@InterfaceType({
+  description: 'Represents a blog post created by a User',
+  resolveType: value => {
+    if ('brandId' in value) {
+      return 'MarketingPost'
+    }
+
+    return 'ConcretePost'
+  }
+})
+export abstract class Post {
   @Field(() => ID)
     id: string
 
@@ -24,6 +34,13 @@ export class Post {
 
   @Field(() => [Comment], { nullable: 'itemsAndList' })
     comments?: Comment[]
+}
+@ObjectType({ implements: Post })
+export class ConcretePost extends Post {}
+@ObjectType({ implements: Post })
+export class MarketingPost extends Post {
+  @Field(() => Brand, { nullable: true })
+    brand: Brand
 }
 @ObjectType()
 export class PostEdge extends EdgeType('post', Post) {}

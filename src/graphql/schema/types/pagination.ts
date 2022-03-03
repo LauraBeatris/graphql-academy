@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Max, Min } from 'class-validator'
 import * as Relay from 'graphql-relay'
 
@@ -41,12 +43,17 @@ export class PageInfo implements Partial<Relay.PageInfo> {
     endCursor: string
 }
 
+export type AbstractConstructor<T, TArgs extends any[] = any> = Function & {
+  prototype: T,
+  apply: (this: unknown, args: TArgs) => void
+};
+
 /**
  * Generates an edge type with extra connection metadata for a particular item type
  */
 export function EdgeType<NodeType> (
   nodeName: string,
-  nodeType: ClassType<NodeType>
+  nodeType: ClassType<NodeType> | AbstractConstructor<NodeType>
 ) {
   @ObjectType(`${nodeName}Edge`, { isAbstract: true })
   abstract class Edge implements Relay.Edge<NodeType> {
