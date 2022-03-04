@@ -1,6 +1,6 @@
 import { BadRequestError, NotFoundError } from 'errors'
 import { ConnectionArgs, OffsetPaginationArgs } from 'graphql/schema/types/pagination'
-import { Post } from 'graphql/schema/types/post'
+import { IPost } from 'graphql/schema/types/post'
 import { dbClient } from './config'
 
 export const getAllPosts = ({ after, first }: ConnectionArgs) => {
@@ -11,15 +11,15 @@ export const getAllPosts = ({ after, first }: ConnectionArgs) => {
   const isFirstRequest = !after
   if (isFirstRequest) {
     return dbClient.post.findMany({
+      take: first
+    })
+  } else {
+    return dbClient.post.findMany({
       take: first,
       skip: 1,
       cursor: {
         id: after
       }
-    })
-  } else {
-    return dbClient.post.findMany({
-      take: first
     })
   }
 }
@@ -40,6 +40,10 @@ export const getPostAuthor = ({ postId }: { postId: string }) => (
       id: postId
     }
   }).author()
+)
+
+export const getPostBrand = ({ brandId }: { brandId: string }) => (
+  dbClient.post.findUnique({ where: { id: brandId } }).brand()
 )
 
 export const createPost = async ({
@@ -101,7 +105,7 @@ export const deletePost = async ({ id }: { id: string }) => {
   return dbClient.post.delete({ where: { id } })
 }
 
-type UpdatePostData = Partial<Omit<Post, 'id' | 'authorId' | 'author' | 'comments'>>
+type UpdatePostData = Partial<Omit<IPost, 'id' | 'authorId' | 'author' | 'comments'>>
 export const updatePost = async (id: string, data: UpdatePostData) => {
   const post = await dbClient.post.findUnique({
     where: { id }

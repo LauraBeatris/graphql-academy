@@ -1,6 +1,6 @@
 import { createUnionType, Field, ID, InputType, ObjectType } from 'type-graphql'
 import { ErrorCode } from 'graphql/schema/enums/errorCode'
-import { Post } from './post'
+import { IPost } from './post'
 import { UserError } from './userError'
 
 @ObjectType()
@@ -14,8 +14,8 @@ export class User {
   @Field()
     email: string
 
-  @Field(() => [Post], { nullable: 'itemsAndList' })
-    posts?: Post[]
+  @Field(() => [IPost], { nullable: 'itemsAndList' })
+    posts?: IPost[]
 }
 
 @ObjectType()

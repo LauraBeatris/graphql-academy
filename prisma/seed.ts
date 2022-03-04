@@ -149,6 +149,22 @@ async function runDBSeed () {
     }
   })
   console.log(`DB Seed 🌱 - User ${user4.email} created with posts and comments`)
+
+  const brandName = 'AMAZING BRAND!'
+  const brand = await prisma.brand.upsert({
+    where: { name: brandName },
+    update: {},
+    create: {
+      name: brandName,
+      posts: {
+        create: [{
+          title: 'Review of an amazing brand!',
+          author: { connect: { email: user4.email } }
+        }]
+      }
+    }
+  })
+  console.log(`DB Seed 🌱 - Brand ${brand.name} created with post`)
 }
 
 runDBSeed()

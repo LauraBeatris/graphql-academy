@@ -1,12 +1,22 @@
-import { createUnionType, Field, ID, InputType, ObjectType } from 'type-graphql'
+import { createUnionType, Field, ID, InputType, InterfaceType, ObjectType } from 'type-graphql'
+import { Brand } from './brand'
 import { Comment } from './comment'
 import { ConnectionType, EdgeType } from './pagination'
 import { User } from './user'
 import { UserError } from './userError'
 import { ErrorCode } from '../enums/errorCode'
 
-@ObjectType({ description: 'Represents a blog post created by a User' })
-export class Post {
+@InterfaceType({
+  description: 'Represents a blog post created by a User',
+  resolveType: value => {
+    if ('brandId' in value) {
+      return 'MarketingPost'
+    }
+
+    return 'RegularPost'
+  }
+})
+export abstract class IPost {
   @Field(() => ID)
     id: string
 
@@ -25,13 +35,23 @@ export class Post {
   @Field(() => [Comment], { nullable: 'itemsAndList' })
     comments?: Comment[]
 }
+@ObjectType({ implements: IPost })
+export class RegularPost extends IPost {}
+@ObjectType({
+  implements: IPost,
+  description: 'Represents a marketing blog post attached to a Brand'
+})
+export class MarketingPost extends IPost {
+  @Field(() => Brand, { nullable: true })
+    brand: Brand
+}
 @ObjectType()
-export class PostEdge extends EdgeType('post', Post) {}
+export class PostEdge extends EdgeType('post', IPost) {}
 @ObjectType()
 export class PostConnection extends ConnectionType('post', PostEdge) {}
 
 @InputType()
-export class CreatePostInput implements Partial<Post> {
+export class CreatePostInput implements Partial<IPost> {
   @Field()
     title: string
 
@@ -43,8 +63,8 @@ export class CreatePostInput implements Partial<Post> {
 }
 @ObjectType()
 export class CreatePostSuccess {
-  @Field(() => Post)
-    post: Post
+  @Field(() => IPost)
+    post: IPost
 }
 @ObjectType()
 export class PostTitleTakenError implements Partial<UserError> {
@@ -69,8 +89,8 @@ export class DeletePostInput implements Partial<User> {
 }
 @ObjectType()
 export class DeletePostSuccess {
-  @Field(() => Post)
-    post: Post
+  @Field(() => IPost)
+    post: IPost
 }
 export const DeletePostPayload = createUnionType({
   name: 'DeletePostPayload',
@@ -84,8 +104,8 @@ export class PublishPostInput implements Partial<User> {
 }
 @ObjectType()
 export class PublishPostSuccess {
-  @Field(() => Post)
-    post: Post
+  @Field(() => IPost)
+    post: IPost
 }
 export const PublishPostPayload = createUnionType({
   name: 'PublishPostPayload',
@@ -98,8 +118,8 @@ export class UnpublishPostInput implements Partial<User> {
 }
 @ObjectType()
 export class UnpublishPostSuccess {
-  @Field(() => Post)
-    post: Post
+  @Field(() => IPost)
+    post: IPost
 }
 export const UnpublishPostPayload = createUnionType({
   name: 'UnpublishPostPayload',
