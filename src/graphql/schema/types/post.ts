@@ -13,10 +13,10 @@ import { ErrorCode } from '../enums/errorCode'
       return 'MarketingPost'
     }
 
-    return 'ConcretePost'
+    return 'RegularPost'
   }
 })
-export abstract class Post {
+export abstract class IPost {
   @Field(() => ID)
     id: string
 
@@ -35,20 +35,20 @@ export abstract class Post {
   @Field(() => [Comment], { nullable: 'itemsAndList' })
     comments?: Comment[]
 }
-@ObjectType({ implements: Post })
-export class ConcretePost extends Post {}
-@ObjectType({ implements: Post })
-export class MarketingPost extends Post {
+@ObjectType({ implements: IPost })
+export class RegularPost extends IPost {}
+@ObjectType({ implements: IPost })
+export class MarketingPost extends IPost {
   @Field(() => Brand, { nullable: true })
     brand: Brand
 }
 @ObjectType()
-export class PostEdge extends EdgeType('post', Post) {}
+export class PostEdge extends EdgeType('post', IPost) {}
 @ObjectType()
 export class PostConnection extends ConnectionType('post', PostEdge) {}
 
 @InputType()
-export class CreatePostInput implements Partial<Post> {
+export class CreatePostInput implements Partial<IPost> {
   @Field()
     title: string
 
@@ -60,8 +60,8 @@ export class CreatePostInput implements Partial<Post> {
 }
 @ObjectType()
 export class CreatePostSuccess {
-  @Field(() => Post)
-    post: Post
+  @Field(() => IPost)
+    post: IPost
 }
 @ObjectType()
 export class PostTitleTakenError implements Partial<UserError> {
@@ -86,8 +86,8 @@ export class DeletePostInput implements Partial<User> {
 }
 @ObjectType()
 export class DeletePostSuccess {
-  @Field(() => Post)
-    post: Post
+  @Field(() => IPost)
+    post: IPost
 }
 export const DeletePostPayload = createUnionType({
   name: 'DeletePostPayload',
@@ -101,8 +101,8 @@ export class PublishPostInput implements Partial<User> {
 }
 @ObjectType()
 export class PublishPostSuccess {
-  @Field(() => Post)
-    post: Post
+  @Field(() => IPost)
+    post: IPost
 }
 export const PublishPostPayload = createUnionType({
   name: 'PublishPostPayload',
@@ -115,8 +115,8 @@ export class UnpublishPostInput implements Partial<User> {
 }
 @ObjectType()
 export class UnpublishPostSuccess {
-  @Field(() => Post)
-    post: Post
+  @Field(() => IPost)
+    post: IPost
 }
 export const UnpublishPostPayload = createUnionType({
   name: 'UnpublishPostPayload',

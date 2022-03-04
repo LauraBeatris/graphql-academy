@@ -5,11 +5,11 @@ import { createPost, deletePost, getAllPosts, getPostAuthor, getPostBrand, updat
 import { Brand } from 'graphql/schema/types/brand'
 import { Comment } from 'graphql/schema/types/comment'
 import { ConnectionArgs, OffsetPaginationArgs, transformDataToConnection } from 'graphql/schema/types/pagination'
-import { CreatePostInput, CreatePostPayload, CreatePostSuccess, DeletePostInput, DeletePostPayload, DeletePostSuccess, MarketingPost, Post, PostConnection, PostTitleTakenError, PublishPostInput, PublishPostPayload, PublishPostSuccess, UnpublishPostInput, UnpublishPostPayload, UnpublishPostSuccess } from 'graphql/schema/types/post'
+import { CreatePostInput, CreatePostPayload, CreatePostSuccess, DeletePostInput, DeletePostPayload, DeletePostSuccess, IPost, MarketingPost, PostConnection, PostTitleTakenError, PublishPostInput, PublishPostPayload, PublishPostSuccess, UnpublishPostInput, UnpublishPostPayload, UnpublishPostSuccess } from 'graphql/schema/types/post'
 import { User } from 'graphql/schema/types/user'
 import { UserError } from 'graphql/schema/types/userError'
 
-@Resolver(() => Post)
+@Resolver(() => IPost)
 export class PostResolver {
   @Query(() => PostConnection)
   async posts (@Args() { after, first }: ConnectionArgs) {
@@ -22,7 +22,7 @@ export class PostResolver {
 
   @FieldResolver(() => [Comment], { nullable: 'itemsAndList' })
   comments (
-    @Root() { id: postId }: Post,
+    @Root() { id: postId }: IPost,
     @Args() { take, skip }: OffsetPaginationArgs
   ) {
     return getPostComments({ postId, take, skip })
@@ -30,7 +30,7 @@ export class PostResolver {
 
   @FieldResolver(() => User, { nullable: true })
   author (
-    @Root() { id: postId }: Post
+    @Root() { id: postId }: IPost
   ) {
     return getPostAuthor({ postId })
   }

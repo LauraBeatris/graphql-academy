@@ -1,6 +1,6 @@
 import { BadRequestError, NotFoundError } from 'errors'
 import { ConnectionArgs, OffsetPaginationArgs } from 'graphql/schema/types/pagination'
-import { Post } from 'graphql/schema/types/post'
+import { IPost } from 'graphql/schema/types/post'
 import { dbClient } from './config'
 
 export const getAllPosts = ({ after, first }: ConnectionArgs) => {
@@ -105,7 +105,7 @@ export const deletePost = async ({ id }: { id: string }) => {
   return dbClient.post.delete({ where: { id } })
 }
 
-type UpdatePostData = Partial<Omit<Post, 'id' | 'authorId' | 'author' | 'comments'>>
+type UpdatePostData = Partial<Omit<IPost, 'id' | 'authorId' | 'author' | 'comments'>>
 export const updatePost = async (id: string, data: UpdatePostData) => {
   const post = await dbClient.post.findUnique({
     where: { id }

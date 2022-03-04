@@ -83,7 +83,7 @@ export function ConnectionType<
       pageInfo: PageInfo
 
     @Field(() => [edgeClass])
-      edges: EdgeType[]
+      edges: any[]
   }
 
   return Connection
