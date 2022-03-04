@@ -20,6 +20,7 @@ to link implementations so that you can use as a basis for your personal project
 - [Reproducing N+1 issue](https://github.com/LauraBeatris/graphql-academy/pull/4)
 - [Mutations with payload, input types and error as data handling](https://github.com/LauraBeatris/graphql-academy/pull/6)
 - [Pagination: Cursor & Offset styles](https://github.com/LauraBeatris/graphql-academy/pull/7)
+- [Introduce interface type to decouple schema from the persistence layer](https://github.com/LauraBeatris/graphql-academy/pull/8)
 
 ## Steps to run API locally
 
