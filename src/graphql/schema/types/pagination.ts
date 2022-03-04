@@ -83,7 +83,7 @@ export function ConnectionType<
       pageInfo: PageInfo
 
     @Field(() => [edgeClass])
-      edges: any[]
+      edges: Relay.Edge<NodeType>[]
   }
 
   return Connection
