@@ -37,7 +37,10 @@ export abstract class IPost {
 }
 @ObjectType({ implements: IPost })
 export class RegularPost extends IPost {}
-@ObjectType({ implements: IPost })
+@ObjectType({
+  implements: IPost,
+  description: 'Represents a marketing blog post attached to a Brand'
+})
 export class MarketingPost extends IPost {
   @Field(() => Brand, { nullable: true })
     brand: Brand
