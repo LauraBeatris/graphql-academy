@@ -1,0 +1,213 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Brand {
+  id: ID!
+  name: String!
+}
+
+"""Represents a comment from a Post created by a User"""
+type Comment {
+  author: User
+  id: ID!
+  text: String!
+}
+
+input CreateCommentInput {
+  authorId: ID!
+  postId: ID!
+  text: String!
+}
+
+union CreateCommentPayload = CreateCommentSuccess | UserError
+
+type CreateCommentSuccess {
+  comment: Comment!
+}
+
+input CreatePostInput {
+  authorId: String!
+  description: String
+  title: String!
+}
+
+union CreatePostPayload = CreatePostSuccess | PostTitleTakenError | UserError
+
+type CreatePostSuccess {
+  post: IPost!
+}
+
+input CreateUserInput {
+  email: String!
+  name: String!
+}
+
+union CreateUserPayload = CreateUserSuccess | EmailTakenError | UserNameTakenError
+
+type CreateUserSuccess {
+  user: User!
+}
+
+input DeleteCommentInput {
+  id: ID!
+}
+
+union DeleteCommentPayload = DeleteCommentSuccess | UserError
+
+type DeleteCommentSuccess {
+  comment: Comment!
+}
+
+input DeletePostInput {
+  id: ID!
+}
+
+union DeletePostPayload = DeletePostSuccess | UserError
+
+type DeletePostSuccess {
+  post: IPost!
+}
+
+input DeleteUserInput {
+  id: ID!
+}
+
+union DeleteUserPayload = DeleteUserSuccess | UserError
+
+type DeleteUserSuccess {
+  user: User!
+}
+
+type EmailTakenError {
+  code: ErrorCode!
+  emailWasTaken: Boolean!
+  message: String!
+}
+
+enum ErrorCode {
+  """Duplicated entry on the data source."""
+  BAD_REQUEST
+  """Requested data not found on the data source."""
+  NOT_FOUND
+}
+
+"""Represents a blog post created by a User"""
+interface IPost {
+  author: User
+  comments(skip: Int, take: Int): [Comment]
+  description: String
+  id: ID!
+  isPublished: Boolean!
+  title: String!
+}
+
+"""Represents a marketing blog post attached to a Brand"""
+type MarketingPost implements IPost {
+  author: User
+  brand: Brand
+  comments(skip: Int, take: Int): [Comment]
+  description: String
+  id: ID!
+  isPublished: Boolean!
+  title: String!
+}
+
+type Mutation {
+  createComment(data: CreateCommentInput!): CreateCommentPayload!
+  createPost(data: CreatePostInput!): CreatePostPayload!
+  createUser(
+    """Represents the input data needed to create a new user"""
+    data: CreateUserInput!
+  ): CreateUserPayload!
+  deleteComment(data: DeleteCommentInput!): DeleteCommentPayload!
+  deletePost(data: DeletePostInput!): DeletePostPayload!
+  deleteUser(data: DeleteUserInput!): DeleteUserPayload!
+  publishPost(data: PublishPostInput!): PublishPostPayload!
+  unpublishPost(data: UnpublishPostInput!): UnpublishPostPayload!
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+type PostConnection {
+  edges: [PostEdge!]!
+  pageInfo: PageInfo!
+}
+
+type PostEdge {
+  """Used in `before` and `after` args"""
+  cursor: String!
+  node: IPost!
+}
+
+type PostTitleTakenError {
+  code: ErrorCode!
+  message: String!
+  postTitleWasTaken: Boolean!
+}
+
+input PublishPostInput {
+  id: ID!
+}
+
+union PublishPostPayload = PublishPostSuccess | UserError
+
+type PublishPostSuccess {
+  post: IPost!
+}
+
+type Query {
+  comments(skip: Int, take: Int): [Comment]
+  posts(
+    """Paginate after cursor"""
+    after: String
+    """Paginate first"""
+    first: Float
+  ): PostConnection!
+  users(skip: Int, take: Int): [User]
+}
+
+type RegularPost implements IPost {
+  author: User
+  comments(skip: Int, take: Int): [Comment]
+  description: String
+  id: ID!
+  isPublished: Boolean!
+  title: String!
+}
+
+input UnpublishPostInput {
+  id: ID!
+}
+
+union UnpublishPostPayload = UnpublishPostSuccess | UserError
+
+type UnpublishPostSuccess {
+  post: IPost!
+}
+
+type User {
+  email: String!
+  id: ID!
+  name: String!
+  posts(skip: Int, take: Int): [IPost]
+}
+
+type UserError {
+  """An optional error code for clients to match on"""
+  code: Float!
+  """The error message"""
+  message: String!
+  """Indicates which field cause the error, if any - Field is an array that acts as a path to the error"""
+  path: [String!]
+}
+
+type UserNameTakenError {
+  code: ErrorCode!
+  message: String!
+  suggestedUsername: String!
+}
